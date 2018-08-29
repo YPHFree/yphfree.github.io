@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>FreeRTOS 队列 | yphfree的学习笔记</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">FreeRTOS 队列</h1><a id="logo" href="/.">yphfree的学习笔记</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">FreeRTOS 队列</h1><div class="post-meta">Jan 22, 2018<span> | </span><span class="category"><a href="/categories/FreeRTOS/">FreeRTOS</a></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#队列简介"><span class="toc-number">1.</span> <span class="toc-text">队列简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#数据存储"><span class="toc-number">1.1.</span> <span class="toc-text">数据存储</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#多任务访问"><span class="toc-number">1.1.1.</span> <span class="toc-text">多任务访问</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#出队阻塞"><span class="toc-number">1.1.2.</span> <span class="toc-text">出队阻塞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#入队阻塞"><span class="toc-number">1.1.3.</span> <span class="toc-text">入队阻塞</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#队列结构体"><span class="toc-number">2.</span> <span class="toc-text">队列结构体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#队列创建"><span class="toc-number">3.</span> <span class="toc-text">队列创建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#向队列发送消息"><span class="toc-number">4.</span> <span class="toc-text">向队列发送消息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#任务级通用入队函数"><span class="toc-number">4.1.</span> <span class="toc-text">任务级通用入队函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#中断级通用入队函数"><span class="toc-number">4.2.</span> <span class="toc-text">中断级通用入队函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#队列上锁和解锁"><span class="toc-number">5.</span> <span class="toc-text">队列上锁和解锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#从队列读取消息"><span class="toc-number">6.</span> <span class="toc-text">从队列读取消息</span></a></li></ol></div></div><div class="post-content"><p>在没有操作系统的时候两个应用程序进行消息传递一般使用全局变量的方式，但是如果在使用操作系统的应用中用全局变量来传递消息就会涉及到“资源管理”的问题。FreeRTOS对此提供了一个叫做“队列”的机制来完成任务与任务、任务与中断之间的消息传递。</p>
+<ul>
+<li>队列简介</li>
+<li>队列结构体</li>
+<li>队列创建</li>
+<li>向队列发送消息</li>
+<li>队列上锁和解锁</li>
+<li>从队列读取消息</li>
+<li>队列操作实验</li>
+</ul>
+<h2 id="队列简介"><a href="#队列简介" class="headerlink" title="队列简介"></a>队列简介</h2><p>队列是为了任务与任务、任务与中断之间的通信而准备的，可以在任务与任务、任务与中<br>断之间传递消息，队列中可以存储有限的、大小固定的数据项目。任务与任务、任务与中断之<br>间要交流的数据保存在队列中，叫做队列项目。队列所能保存的最大数据项目数量叫做队列的<br>长度，创建队列的时候会指定数据项目的大小和队列的长度。 由于队列用来传递消息的，所以<br>也称为消息队列。 FreeRTOS 中的信号量的也是依据队列实现的</p>
+<h3 id="数据存储"><a href="#数据存储" class="headerlink" title="数据存储"></a>数据存储</h3><p>通常队列采用先进先出(FIFO)的存储缓冲机制，也就是往队列发送数据的时候(也叫入队)永<br>远都是发送到队列的尾部，而从队列提取数据的时候(也叫出队)是从队列的头部提取的。但是<br>也可以使用 LIFO 的存储缓冲，也就是后进先出， FreeRTOS 中的队列也提供了 LIFO 的存储缓<br>冲机制。</p>
+<h4 id="多任务访问"><a href="#多任务访问" class="headerlink" title="多任务访问"></a>多任务访问</h4><p>队列不是属于某个特别指定的任务的，任何任务都可以向队列中发送消息，或者从队列中提取消息。</p>
+<h4 id="出队阻塞"><a href="#出队阻塞" class="headerlink" title="出队阻塞"></a>出队阻塞</h4><p>当任务尝试从一个队列中读取消息的时候可以指定一个阻塞时间，这个阻塞时间就是当任务从队列中读取消息无效的时候任务阻塞的时间。 </p>
+<h4 id="入队阻塞"><a href="#入队阻塞" class="headerlink" title="入队阻塞"></a>入队阻塞</h4><p>入队说的是向队列中发送消息， 将消息加入到队列中。和出队阻塞一样，当一个任务向队列发送消息的话也可以设置阻塞时间。</p>
+<h2 id="队列结构体"><a href="#队列结构体" class="headerlink" title="队列结构体"></a>队列结构体</h2><p>有一个结构体用于描述队列，叫做 Queue_t，这个结构体在文件 queue.c 中定义</p>
+<h2 id="队列创建"><a href="#队列创建" class="headerlink" title="队列创建"></a>队列创建</h2><p>在使用队列之前必须先创建队列， 有两种创建队列的方法，一种是静态的，使用函数xQueueCreateStatic()；另一个是动态的，使用函数 xQueueCreate()。 这两个函数本质上都是宏，真正完成队列创建的函数是 xQueueGenericCreate()和 xQueueGenericCreateStatic()，这两个函数在文件 queue.c 中有定义， 这</p>
+<h2 id="向队列发送消息"><a href="#向队列发送消息" class="headerlink" title="向队列发送消息"></a>向队列发送消息</h2><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>任务级入队函数</td>
+<td>xQueueSend()</td>
+<td>发送消息到队列尾部（ 后向入队），这两个函数是一样的。</td>
+</tr>
+<tr>
+<td>-</td>
+<td>xQueueSendToBack()</td>
+<td>-</td>
+</tr>
+<tr>
+<td>-</td>
+<td>xQueueSendToFront()</td>
+<td>发送消息到队列头（ 前向入队）。</td>
+</tr>
+<tr>
+<td>-</td>
+<td>xQueueOverwrite()</td>
+<td>发送消息到队列， 带覆写功能， 当队列满了以后自动覆盖掉旧的消息。</td>
+</tr>
+<tr>
+<td>中断级入队函数</td>
+</tr>
+<tr>
+<td>-</td>
+<td>xQueueSendFromISR()</td>
+<td>发送消息到队列尾（ 后向入队）， 这两个数函数是一样的，用于中断服务函</td>
+</tr>
+<tr>
+<td>-</td>
+<td>xQueueSendToBackFromISR()</td>
+<td>-</td>
+</tr>
+<tr>
+<td>-</td>
+<td>xQueueSendToFrontFromISR()</td>
+<td>发送消息到队列头（ 前向入队）， 用于中断服务函数</td>
+</tr>
+<tr>
+<td>-</td>
+<td>xQueueOverwriteFromISR()</td>
+<td>发送消息到队列， 带覆写功能， 当队列满了以后自动覆盖掉旧的消息，用于中断服务函数。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="任务级通用入队函数"><a href="#任务级通用入队函数" class="headerlink" title="任务级通用入队函数"></a>任务级通用入队函数</h3><p><strong>函数 xQueueSend()、 xQueueSendToBack()和 xQueueSendToFront()</strong><br>这三个函数都是用于向队列中发送消息的，这三个函数本质都是宏。   </p>
+<p><strong>函数 xQueueSend()和 xQueueSendToBack()是一样的，都是后向入队，即将新的消息插入到队列的后面。</strong>    </p>
+<p><strong>函数xQueueSendToToFront()是前向入队，即将新消息插入到队列的前面。</strong>    </p>
+<p>这三个函数最后都是调用的同一个函数： xQueueGenericSend()，只能用于任务函数中，不能用于中断服务函数，中断服务函数有专用的函数，它们以“ FromISR”结尾。    </p>
+<h3 id="中断级通用入队函数"><a href="#中断级通用入队函数" class="headerlink" title="中断级通用入队函数"></a>中断级通用入队函数</h3><p>中断级入队函数 xQueueGenericSendFromISR()，其他的中断级入队函数都是靠此函数来实现的。</p>
+<h2 id="队列上锁和解锁"><a href="#队列上锁和解锁" class="headerlink" title="队列上锁和解锁"></a>队列上锁和解锁</h2><p>队列的上锁和解锁是两个 API 函数： prvLockQueue()和 prvUnlockQueue()。</p>
+<p>队列上锁函数 prvLockQueue()，此函数本质上就是一个宏，定义如下：<br><figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#define prvLockQueue( pxQueue ) \</span></span><br><span class="line">taskENTER_CRITICAL(); <span class="string">\</span></span><br><span class="line">&#123;  </span><br><span class="line">	<span class="keyword">if</span><span class="function"><span class="params">( ( pxQueue )-&gt;cRxLock == queueUNLOCKED )</span>  </span></span><br><span class="line"><span class="function">	&#123;  </span></span><br><span class="line"><span class="function">	    <span class="params">( pxQueue )</span>-&gt;</span>cRxLock = queueLOCKED_UNMODIFIED; </span><br><span class="line">	&#125;  </span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span><span class="function"><span class="params">( ( pxQueue )-&gt;cTxLock == queueUNLOCKED )</span> </span></span><br><span class="line"><span class="function">	&#123;  </span></span><br><span class="line"><span class="function">	    <span class="params">( pxQueue )</span>-&gt;</span>cTxLock = queueLOCKED_UNMODIFIED; </span><br><span class="line">	&#125;  </span><br><span class="line">&#125; </span><br><span class="line">taskEXIT_CRITICAL()</span><br></pre></td></tr></table></figure></p>
+<p>prvLockQueue()函数很简单，就是将队列中的成员变量 cRxLock 和 cTxLock 设置为queueLOCKED_UNMODIFIED 就行了。</p>
+<h2 id="从队列读取消息"><a href="#从队列读取消息" class="headerlink" title="从队列读取消息"></a>从队列读取消息</h2><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>任务级出队函数</td>
+<td>xQueueReceive()</td>
+<td>从队列中读取队列项(消息)，并且读取完以后删除掉队列项(消息)</td>
+</tr>
+<tr>
+<td>-</td>
+<td>xQueuePeek()</td>
+<td>从队列中读取队列项(消息)，并且读取完以后不删除队列项(消息)</td>
+</tr>
+<tr>
+<td>中断级出队函数</td>
+<td>xQueueReceiveFromISR()</td>
+<td>从队列中读取队列项(消息)，并且读取完以后删除掉队列项(消息)，用于中断服务函数中</td>
+</tr>
+<tr>
+<td>-</td>
+<td>xQueuePeekFromISR ()</td>
+<td>从队列中读取队列项(消息)，并且读取完以后不删除队列项(消息)，用于中断服务函数中。</td>
+</tr>
+</tbody>
+</table>
+</div><div class="tags"><a href="/tags/FreeRTOS/">FreeRTOS</a></div><div class="post-nav"><a class="pre" href="/2018/04/10/Python/numpy/Numpy学习笔记/">Numpy学习笔记</a><a class="next" href="/2018/01/21/RTOS/FreeRTOS/FreeRTOS 时间管理/">FreeRTOS 列表和列表项</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://yoursite.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C语言学习/">C语言学习</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/FreeRTOS/">FreeRTOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Numpy学习笔记/">Numpy学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PyQt5快速开发与实战/">PyQt5快速开发与实战</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python学习笔记/">Python学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/STM32学习笔记/">STM32学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/单片机/">单片机</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/嵌入式C-C-学习笔记/">嵌入式C/C++学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/嵌入式开发学习笔记/">嵌入式开发学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/硬件学习笔记/">硬件学习笔记</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/嵌入式软件/" style="font-size: 15px;">嵌入式软件</a> <a href="/tags/C/" style="font-size: 15px;">C</a> <a href="/tags/硬件基础/" style="font-size: 15px;">硬件基础</a> <a href="/tags/锂电池/" style="font-size: 15px;">锂电池</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Python3/" style="font-size: 15px;">Python3</a> <a href="/tags/嵌入式项目/" style="font-size: 15px;">嵌入式项目</a> <a href="/tags/C-算法/" style="font-size: 15px;">C 算法</a> <a href="/tags/通信协议/" style="font-size: 15px;">通信协议</a> <a href="/tags/STM32基础/" style="font-size: 15px;">STM32基础</a> <a href="/tags/PyQt5/" style="font-size: 15px;">PyQt5</a> <a href="/tags/FreeRTOS/" style="font-size: 15px;">FreeRTOS</a> <a href="/tags/Python-Numpy/" style="font-size: 15px;">Python Numpy</a> <a href="/tags/C51/" style="font-size: 15px;">C51</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/04/10/Python/numpy/Numpy学习笔记/">Numpy学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/22/RTOS/FreeRTOS/FreeRTOS 队列/">FreeRTOS 队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/21/RTOS/FreeRTOS/FreeRTOS 时间管理/">FreeRTOS 列表和列表项</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/20/RTOS/FreeRTOS/FreeRTOS FreeRTOS 任务切换/">FreeRTOS 任务切换</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/20/RTOS/FreeRTOS/FreeRTOS 系统内核控制函数/">FreeRTOS系统内核控制函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/18/RTOS/FreeRTOS/FreeRTOS 任务切换/">FreeRTOS 任务切换</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/18/RTOS/FreeRTOS/FreeRTOS 列表和列表项/">FreeRTOS 列表和列表项</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/Python/Python 3 正则表达式/">Python3基础  正则表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/15/RTOS/FreeRTOS/FreeRTOS 任务相关API函数/">FreeRTOS任务相关API函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/24/UAV/无人机基础知识总结/">无人机基础知识总结</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">yphfree的学习笔记.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
