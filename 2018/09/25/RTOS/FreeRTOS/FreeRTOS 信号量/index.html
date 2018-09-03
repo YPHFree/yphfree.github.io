@@ -1,0 +1,135 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>FreeRTOS 信号量 | yphfree的学习笔记</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">FreeRTOS 信号量</h1><a id="logo" href="/.">yphfree的学习笔记</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">FreeRTOS 信号量</h1><div class="post-meta">Sep 25, 2018<span> | </span><span class="category"><a href="/categories/FreeRTOS/">FreeRTOS</a></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#信号量简介"><span class="toc-number">1.</span> <span class="toc-text">信号量简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二值信号量"><span class="toc-number">2.</span> <span class="toc-text">二值信号量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#二值信号量简介"><span class="toc-number">2.1.</span> <span class="toc-text">二值信号量简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建二值信号量"><span class="toc-number">2.2.</span> <span class="toc-text">创建二值信号量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#函数-vSemaphoreCreateBinary"><span class="toc-number">2.2.1.</span> <span class="toc-text">函数 vSemaphoreCreateBinary ()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#函数-xSemaphoreCreateBinary"><span class="toc-number">2.2.2.</span> <span class="toc-text">函数 xSemaphoreCreateBinary()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#函数-xSemaphoreCreateBinaryStatic"><span class="toc-number">2.2.3.</span> <span class="toc-text">函数 xSemaphoreCreateBinaryStatic()</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二值信号量创建过程分析"><span class="toc-number">2.3.</span> <span class="toc-text">二值信号量创建过程分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#释放信号量"><span class="toc-number">2.4.</span> <span class="toc-text">释放信号量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取信号量"><span class="toc-number">2.5.</span> <span class="toc-text">获取信号量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#计数型信号量"><span class="toc-number">3.</span> <span class="toc-text">计数型信号量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#计数型信号量简介"><span class="toc-number">3.1.</span> <span class="toc-text">计数型信号量简介</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#事件计数"><span class="toc-number">3.1.1.</span> <span class="toc-text">事件计数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#资源管理"><span class="toc-number">3.1.2.</span> <span class="toc-text">资源管理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建计数型信号量"><span class="toc-number">3.2.</span> <span class="toc-text">创建计数型信号量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#释放和获取计数信号量"><span class="toc-number">3.3.</span> <span class="toc-text">释放和获取计数信号量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优先级翻转"><span class="toc-number">4.</span> <span class="toc-text">优先级翻转</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#互斥信号量"><span class="toc-number">5.</span> <span class="toc-text">互斥信号量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#斥信号量简介"><span class="toc-number">5.1.</span> <span class="toc-text">斥信号量简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建互斥信号量"><span class="toc-number">5.2.</span> <span class="toc-text">创建互斥信号量</span></a></li></ol></li></ol></div></div><div class="post-content"><p>信号量是操作系统中重要的一部分，信号量一般用来进行资源管理和任务同步， FreeRTOS中信号量又分为二值信号量、 计数型信号量、互斥信号量和递归互斥信号量。    </p>
+<h2 id="信号量简介"><a href="#信号量简介" class="headerlink" title="信号量简介"></a>信号量简介</h2><p>信号量在共享资源访问中的使用，信号量的另一个重要的应用场合就是任务同步，用于任务与任务或中断与任务之间的同步。 在执行中断服务函数的时候可以通过向任务发送信号量来通知任务它所期待的事件发生了。当退出中断服务函数以后在任务调度器的调度下同步的任务就会执行。在编写中断服务函数的时候我们都知道一定要快进快出，中断服务函数里面不能放太多的代码，否则的话会影响的中断的实时性。 </p>
+<p>裸机编写中断服务函数的时候一般都只是在中断服务函数中打个标记，然后在其他的地方根据标记来做具体的处理过程。在<br>用 RTOS 系统的时候我们就可以借助信号量完成此功能， 当中断发生的时候就释放信号量，中断服务函数不做具体的处理。具体的处理过程做成一个任务，这个任务会获取信号量，如果获取到信号量就说明中断发生了，那么就开始完成相应的处理，这样做的好处就是中断执行时间非常短。 </p>
+<h2 id="二值信号量"><a href="#二值信号量" class="headerlink" title="二值信号量"></a>二值信号量</h2><p>二值信号量的使命就是同步，完成任务与任务或中断与任务之间的同步。大多数情况下都是中断与任务之间的同步。</p>
+<h3 id="二值信号量简介"><a href="#二值信号量简介" class="headerlink" title="二值信号量简介"></a>二值信号量简介</h3><p>二值信号量其实就是一个只有一个队列项的队列，这个特殊的队列要么是满的，要么是空的，这不正好就是二值的吗？ 任务和中断使用这个特殊队列不用在乎队列中存的是什么消息，只需要知道这个队列是满的还是空的。可以利用这个机制来完成任务与中断之间的同步。</p>
+<p>二值信号量通常用于互斥访问或同步， 二值信号量和互斥信号量非常类似，但是还是有一些细微的差别， 互斥信号量拥有优先级继承机制， 二值信号量没有优先级继承。 因此二值信号另更适合用于同步(任务与任务或任务与中断的同步)，而互斥信号量适合用于简单的互斥访问。</p>
+<p>和队列一样，信号量 API 函数允许设置一个阻塞时间，阻塞时间是当任务获取信号量的时候由于信号量无效从而导致任务进入阻塞态的最大时钟节拍数。如果多个任务同时阻塞在同一一个信号量上的话那么优先级最高的哪个任务优先获得信号量， 这样当信号量有效的时候高优先级的任务就会解除阻塞状态。</p>
+<p>在实际应用中通常会使用一个任务来处理 MCU 的某个外设，比如网络应用中，一般最简单的方法就是使用一个任务去轮询的查询 MCU 的 ETH(网络相关外设，如 STM32 的以太网MAC)外设是否有数据，当有数据的时候就处理这个网络数据。这样使用轮询的方式是很浪费CPU 资源的，而且也阻止了其他任务的运行。最理想的方法就是当没有网络数据的时候网络任务就进入阻塞态，把 CPU 让给其他的任务，当有数据的时候网络任务才去执行。</p>
+<p>现在使用二值信号量就可以实现这样的功能，任务通过获取信号量来判断是否有网络数据，没有的话就进入阻塞态，而网络中断服务函数(大多数的网络外设都有中断功能，比如 STM32 的 MAC 专用 DMA中断，通过中断可以判断是否接收到数据)通过释放信号量来通知任务以太网外设接收到了网络数据，网络任务可以去提取处理了。 网络任务只是在一直的获取二值信号量，它不会释放信号量，而中断服务函数是一直在释放信号量，它不会获取信号量。在中断服务函数中发送信号量可以使用函数 xSemaphoreGiveFromISR()， 也可以使用任务通知功能来替代二值信号量，而且使用任务通知的话速度更快，代码量更少，</p>
+<p><strong>使用二值信号量来完成中断与任务同步的这个机制中，任务优先级确保了外设能够得到及<br>时的处理，这样做相当于推迟了中断处理过程。 也可以使用队列来替代二值信号量，在外设事<br>件的中断服务函数中获取相关数据，并将相关的数据通过队列发送给任务。如果队列无效的话<br>任务就进入阻塞态，直至队列中有数据，任务接收到数据以后就开始相关的处理过程。</strong> </p>
+<h3 id="创建二值信号量"><a href="#创建二值信号量" class="headerlink" title="创建二值信号量"></a>创建二值信号量</h3><p>同队列一样，要想使用二值信号量就必须先创建二值信号量</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vSemaphoreCreateBinary ()</td>
+<td>动态创建二值信号量 ，这个是老版本FreeRTOS 中使用的创建二值信号量的 API 函</td>
+</tr>
+</tbody>
+</table>
+<p>数。|<br>|xSemaphoreCreateBinary()|动态创建二值信号量，新版 FreeRTOS 使用此函数创建二值信号量。xSemaphoreCreateBinaryStatic() 静态创建二值信号量。|</p>
+<h4 id="函数-vSemaphoreCreateBinary"><a href="#函数-vSemaphoreCreateBinary" class="headerlink" title="函数 vSemaphoreCreateBinary ()"></a>函数 vSemaphoreCreateBinary ()</h4><p>此函数是老版本 FreeRTOS 中的创建二值信号量函数，新版本已经不再使用了，此函数是个宏 ，具体创建过程是由函数xQueueGenericCreate()来完成的， 在文件 semphr.h 中有如下定义：<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">void vSemaphoreCreateBinary( <span class="name">SemaphoreHandle_t</span>  xSemaphore )</span><br></pre></td></tr></table></figure></p>
+<p>参数：<br>xSemaphore：保存创建成功的二值信号量句柄。         </p>
+<p>返回值：<br>NULL: 二值信号量创建失败。<br>其他值: 二值信号量创建成功。       </p>
+<h4 id="函数-xSemaphoreCreateBinary"><a href="#函数-xSemaphoreCreateBinary" class="headerlink" title="函数 xSemaphoreCreateBinary()"></a>函数 xSemaphoreCreateBinary()</h4><p>此函数是 vSemaphoreCreateBinary()的新版本，新版本的 FreeRTOS 中统一用此函数来创建二值信号量。 使用此函数创建二值信号量的话信号量所需要的 RAM 是由 FreeRTOS 的内存管理部分来动态分配的。此函数创建好的二值信号量默认是空的，也就是说刚创建好的二值信号量使用函数 xSemaphoreTake()是获取不到的，此函数也是个宏， 具体创建过程是由函数xQueueGenericCreate()来完成的， 函数原型如下：   </p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SemaphoreHandle_t xSemaphoreCreateBinary( <span class="name">void</span> )</span><br></pre></td></tr></table></figure>
+<p>参数：<br>xSemaphore：保存创建成功的二值信号量句柄。         </p>
+<p>返回值：<br>NULL: 二值信号量创建失败。<br>其他值: 二值信号量创建成功。  </p>
+<h4 id="函数-xSemaphoreCreateBinaryStatic"><a href="#函数-xSemaphoreCreateBinaryStatic" class="headerlink" title="函数 xSemaphoreCreateBinaryStatic()"></a>函数 xSemaphoreCreateBinaryStatic()</h4><p>此函数也是创建二值信号量的，只不过使用此函数创建二值信号量的话信号量所需要的RAM需要由用户来分配，此函数是个宏，具体创建过程是通过函数 xQueueGenericCreateStatic()来完成的，函数原型如下：    </p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">SemaphoreHandle_t</span> <span class="selector-tag">xSemaphoreCreateBinaryStatic</span>( StaticSemaphore_t *pxSemaphoreBuffer )</span><br></pre></td></tr></table></figure>
+<p>参数：<br>pxSemaphoreBuffer： 此参数指向一个 StaticSemaphore_t 类型的变量，用来保存信号量结构体。           </p>
+<p>返回值：<br>NULL: 二值信号量创建失败。<br>其他值: 创建成功的二值信号量句柄。        </p>
+<h3 id="二值信号量创建过程分析"><a href="#二值信号量创建过程分析" class="headerlink" title="二值信号量创建过程分析"></a>二值信号量创建过程分析</h3><p>老版本的二值信号量动态创建函数 vSemaphoreCreateBinary()，函数代码如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">if</span>( configSUPPORT_DYNAMIC_ALLOCATION == 1 )</span></span><br><span class="line"></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">define</span> vSemaphoreCreateBinary( xSemaphore ) </span></span><br><span class="line">	&#123;  </span><br><span class="line">	    ( xSemaphore ) = xQueueGenericCreate( ( UBaseType_t ) <span class="number">1</span>, \ (<span class="number">1</span>)</span><br><span class="line">	    semSEMAPHORE_QUEUE_ITEM_LENGTH, \</span><br><span class="line">	    queueQUEUE_TYPE_BINARY_SEMAPHORE ); </span><br><span class="line"></span><br><span class="line">	    <span class="keyword">if</span>( ( xSemaphore ) != <span class="literal">NULL</span> )</span><br><span class="line">	    &#123; </span><br><span class="line">	        ( <span class="keyword">void</span> ) xSemaphoreGive( ( xSemaphore ) ); \ (<span class="number">2</span>)</span><br><span class="line">	    &#125;  </span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure></p>
+<p>(1)、上面说了二值信号量是在队列的基础上实现的，所以创建二值信号量就是创建队列的过程。这里使用函数 xQueueGenericCreate()创建了一个队列，队列长度为 1，队列项长度为 0，队列类型为 queueQUEUE_TYPE_BINARY_SEMAPHORE，也就是二值信号量。        </p>
+<p>(2)、当二值信号量创建成功以后立即调用函数 xSemaphoreGive()释放二值信号量，此时新创建的二值信号量有效。</p>
+<p>新版本的二值信号量创建函数 xSemaphoreCreateBinary()，函数代码如下：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="keyword">if</span>( configSUPPORT_DYNAMIC_ALLOCATION == 1 )</span></span><br><span class="line"><span class="meta">	#</span><span class="bash">define xSemaphoreCreateBinary() \</span></span><br><span class="line">	xQueueGenericCreate( ( UBaseType_t ) 1, \</span><br><span class="line">	semSEMAPHORE_QUEUE_ITEM_LENGTH, \</span><br><span class="line">	queueQUEUE_TYPE_BINARY_SEMAPHORE ) \</span><br><span class="line"><span class="meta">#</span><span class="bash">endif</span></span><br></pre></td></tr></table></figure></p>
+<p>可以看出新版本的二值信号量创建函数也是使用函数 xQueueGenericCreate()来创建一个类型为 queueQUEUE_TYPE_BINARY_SEMAPHORE、长度为 1、队列项长度为 0 的队列。这一步和老版本的二值信号量创建函数一样，唯一不同的就是新版本的函数在成功创建二值信号量以后不会立即调用函数 xSemaphoreGive()释放二值信号量。 也就是说新版函数创建的二值信号量默认是无效的，而老版本是有效的。</p>
+<h3 id="释放信号量"><a href="#释放信号量" class="headerlink" title="释放信号量"></a>释放信号量</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xSemaphoreGive()</td>
+<td>任务级信号量释放函数</td>
+</tr>
+<tr>
+<td>xSemaphoreGiveFromISR()</td>
+<td>中断级信号量释放函数</td>
+</tr>
+</tbody>
+</table>
+<p>同队列一样，释放信号量也分为任务级和中断级，不管是二值信号量、计数型信号量还是互斥信号量，<br>递归互斥信号量有专用的释放函数。</p>
+<p>函数 xSemaphoreGive()此函数用于释放二值信号量、计数型信号量或互斥信号量， 此函数是一个宏，真正释放信<br>号量的过程是由函数 xQueueGenericSend()来完成的， 函数原型如下：<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BaseType_t xSemaphoreGive( <span class="name">xSemaphore</span> )</span><br></pre></td></tr></table></figure></p>
+<p>参数：<br>xSemaphore： 要释放的信号量句柄。<br>返回值：<br>pdPASS:        释放信号量成功。<br>errQUEUE_FULL: 释放信号量失败。          </p>
+<p>xSemaphoreGive()此函数在文件 semphr.h 中有如下定义：</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#define xSemaphoreGive( xSemaphore ) \</span></span><br><span class="line"></span><br><span class="line">	xQueueGenericSend( ( QueueHandle_t ) ( xSemaphore ), <span class="string">\</span></span><br><span class="line">	NULL, <span class="string">\</span></span><br><span class="line">	semGIVE_BLOCK_TIME, <span class="string">\</span></span><br><span class="line">	queueSEND_TO_BACK ) <span class="string">\</span></span><br></pre></td></tr></table></figure>
+<p>可以看出任务级释放信号量就是向队列发送消息的过程，只是这里并没有发送具体的消息，<br>阻塞时间为 0(宏 semGIVE_BLOCK_TIME 为 0)，入队方式采用的后向入队,入队的时候队列结构体成员变量 uxMessagesWaiting 会加一，对于二,值信号量通过判断 uxMessagesWaiting 就可以知道信号量是否有效了，当 uxMessagesWaiting 为1 的话说明二值信号量有效，为 0 就无效。 如果队列满的话就返回错误值 errQUEUE_FULL，提示队列满，入队失败。</p>
+<p>函数 xSemaphoreGiveFromISR()<br>此函数用于在中断中释放信号量， 此函数只能用来释放二值信号量和计数型信号量，绝对不能用来在中断服务函数中释放互斥信号量！此函数是一个宏，真正执行的是函数xQueueGiveFromISR()， 此函数原型如下：<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BaseType_t </span>xSemaphoreGiveFromISR( SemaphoreHandle_t xSemaphore,</span><br><span class="line">                                  <span class="keyword">BaseType_t </span>* pxHigherPriorityTaskWoken)</span><br></pre></td></tr></table></figure></p>
+<h3 id="获取信号量"><a href="#获取信号量" class="headerlink" title="获取信号量"></a>获取信号量</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xSemaphoreTake()</td>
+<td>任务级获取信号量函数</td>
+</tr>
+<tr>
+<td>xSemaphoreTakeFromISR()</td>
+<td>中断级获取信号量函数</td>
+</tr>
+</tbody>
+</table>
+<p>函数 xSemaphoreTake()<br>此函数用于获取二值信号量、计数型信号量或互斥信号量，此函数是一个宏，真正获取信号量的过程是由函数 xQueueGenericReceive ()来完成的，函数原型如下：<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BaseType_t xSemaphoreTake(<span class="name">SemaphoreHandle_t</span> xSemaphore,</span><br><span class="line">                          TickType_t xBlockTime)</span><br></pre></td></tr></table></figure></p>
+<p>参数：<br>xSemaphore： 要获取的信号量句柄。<br>xBlockTime: 阻塞时间。  </p>
+<p>返回值：<br>pdTRUE: 获取信号量成功。<br>pdFALSE: 超时，获取信号量失败。       </p>
+<p>函数 xSemaphoreTakeFromISR ()<br>此函数用于在中断服务函数中获取信号量， 此函数用于获取二值信号量和计数型信号量，绝 对 不 能 使 用 此 函 数 来获取互斥信号量！此函数是一个宏 ， 真正执行的是函数xQueueReceiveFromISR ()，此函数原型如下：<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BaseType_t </span>xSemaphoreTakeFromISR(SemaphoreHandle_t xSemaphore,</span><br><span class="line">                                 <span class="keyword">BaseType_t </span>* pxHigherPriorityTaskWoken)</span><br></pre></td></tr></table></figure></p>
+<h2 id="计数型信号量"><a href="#计数型信号量" class="headerlink" title="计数型信号量"></a>计数型信号量</h2><h3 id="计数型信号量简介"><a href="#计数型信号量简介" class="headerlink" title="计数型信号量简介"></a>计数型信号量简介</h3><p>有些资料中也将计数型信号量叫做数值信号量， 二值信号量相当于长度为 1 的队列，那么计数型信号量就是长度大于 1 的队列。 同二值信号量一样，用户不需要关心队列中存储了什么数据，只需要关心队列是否为空即可。 计数型信号量通常用于如下两个场合：</p>
+<h4 id="事件计数"><a href="#事件计数" class="headerlink" title="事件计数"></a>事件计数</h4><p>在这个场合中， 每次事件发生的时候就在事件处理函数中释放信号量(增加信号量的计数值)，其他任务会获取信号量 (信号量计数值减一，信号量值就是队列结构体成员变量uxMessagesWaiting)来处理事件。在这种场合中创建的计数型信号量初始计数值为 0。</p>
+<h4 id="资源管理"><a href="#资源管理" class="headerlink" title="资源管理"></a>资源管理</h4><p>在这个场合中，信号量值代表当前资源的可用数量，比如停车场当前剩余的停车位数量。一个任务要想获得资源的使用权，首先必须获取信号量，信号量获取成功以后信号量值就会减一。当信号量值为 0 的时候说明没有资源了。当一个任务使用完资源以后一定要释放信号量，释放信号量以后信号量值会加一。在这个场合中创建的计数型信号量初始值应该是资源的数量，比如停车场一共有 100 个停车位，那么创建信号量的时候信号量值就应该初始化为 100。</p>
+<h3 id="创建计数型信号量"><a href="#创建计数型信号量" class="headerlink" title="创建计数型信号量"></a>创建计数型信号量</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xSemaphoreCreateCounting()</td>
+<td>使用动态方法创建计数型信号量。</td>
+</tr>
+<tr>
+<td>xSemaphoreCreateCountingStatic()</td>
+<td>使用静态方法创建计数型信号量</td>
+</tr>
+</tbody>
+</table>
+<h3 id="释放和获取计数信号量"><a href="#释放和获取计数信号量" class="headerlink" title="释放和获取计数信号量"></a>释放和获取计数信号量</h3><p>计数型信号量的释放和获取与二值信号量相同</p>
+<h2 id="优先级翻转"><a href="#优先级翻转" class="headerlink" title="优先级翻转"></a>优先级翻转</h2><p>在使用二值信号量的时候会遇到很常见的一个问题——优先级翻转，优先级翻转在可剥夺内核中是非常常见的，在实时系统中不允许出现这种现象，这样会破坏任务的预期顺序，可能会导致严重的后果。</p>
+<h2 id="互斥信号量"><a href="#互斥信号量" class="headerlink" title="互斥信号量"></a>互斥信号量</h2><h3 id="斥信号量简介"><a href="#斥信号量简介" class="headerlink" title="斥信号量简介"></a>斥信号量简介</h3><p>互斥信号量其实就是一个拥有优先级继承的二值信号量， 在同步的应用中(任务与任务或中断与任务之间的同步)二值信号量最适合。 互斥信号量适合用于那些需要互斥访问的应用中。 在互斥访问中互斥信号量相当于一个钥匙，当任务想要使用资源的时候就必须先获得这个钥匙，当使用完资源以后就必须归还这个钥匙，这样其他的任务就可以拿着这个钥匙去使用资源。</p>
+<p>互斥信号量使用和二值信号量相同的 API 操作函数，所以互斥信号量也可以设置阻塞时间，不同于二值信号量的是互斥信号量具有优先级继承的特性。当一个互斥信号量正在被一个低优先级的任务使用，而此时有个高优先级的任务也尝试获取这个互斥信号量的话就会被阻塞。不过这个高优先级的任务会将低优先级任务的优先级提升到与自己相同的优先级， 这个过程就是优先级继承。优先级继承尽可能的降低了高优先级任务处于阻塞态的时间，并且将已经出现的“优先级翻转”的影响降到最低。</p>
+<p>优先级继承并不能完全的消除优先级翻转， 它只是尽可能的降低优先级翻转带来的影响。硬实时应用应该在设计之初就要避免优先级翻转的发生。互斥信号量不能用于中断服务函数中，原因如下：        </p>
+<p>● 互斥信号量有优先级继承的机制，所以只能用在任务中，不能用于中断服务函数。<br>● 中断服务函数中不能因为要等待互斥信号量而设置阻塞时间进入阻塞态。</p>
+<h3 id="创建互斥信号量"><a href="#创建互斥信号量" class="headerlink" title="创建互斥信号量"></a>创建互斥信号量</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xSemaphoreCreateMutex()</td>
+<td>使用动态方法创建互斥信号量。</td>
+</tr>
+<tr>
+<td>xSemaphoreCreateMutexStatic()</td>
+<td>使用静态方法创建互斥信号量。</td>
+</tr>
+</tbody>
+</table>
+</div><div class="tags"><a href="/tags/FreeRTOS/">FreeRTOS</a></div><div class="post-nav"><a class="pre" href="/2018/09/25/RTOS/FreeRTOS/FreeRTOS 队列/">FreeRTOS 队列</a><a class="next" href="/2018/04/10/Python/numpy/Numpy学习笔记/">Numpy学习笔记</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://yoursite.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C语言学习/">C语言学习</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/FreeRTOS/">FreeRTOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Numpy学习笔记/">Numpy学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PyQt5快速开发与实战/">PyQt5快速开发与实战</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python学习笔记/">Python学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/STM32学习笔记/">STM32学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/单片机/">单片机</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/嵌入式C-C-学习笔记/">嵌入式C/C++学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/嵌入式开发学习笔记/">嵌入式开发学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/硬件学习笔记/">硬件学习笔记</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/锂电池/" style="font-size: 15px;">锂电池</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Python3/" style="font-size: 15px;">Python3</a> <a href="/tags/硬件基础/" style="font-size: 15px;">硬件基础</a> <a href="/tags/通信协议/" style="font-size: 15px;">通信协议</a> <a href="/tags/嵌入式软件/" style="font-size: 15px;">嵌入式软件</a> <a href="/tags/嵌入式项目/" style="font-size: 15px;">嵌入式项目</a> <a href="/tags/C-算法/" style="font-size: 15px;">C 算法</a> <a href="/tags/C/" style="font-size: 15px;">C</a> <a href="/tags/STM32基础/" style="font-size: 15px;">STM32基础</a> <a href="/tags/PyQt5/" style="font-size: 15px;">PyQt5</a> <a href="/tags/C51/" style="font-size: 15px;">C51</a> <a href="/tags/Python-Numpy/" style="font-size: 15px;">Python Numpy</a> <a href="/tags/FreeRTOS/" style="font-size: 15px;">FreeRTOS</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/10/03/RTOS/FreeRTOS/FreeRTOS 软件定时器/">FreeRTOS 软件定时器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/RTOS/FreeRTOS/FreeRTOS 队列/">FreeRTOS 队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/RTOS/FreeRTOS/FreeRTOS 信号量/">FreeRTOS 信号量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/04/10/Python/numpy/Numpy学习笔记/">Numpy学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/21/RTOS/FreeRTOS/FreeRTOS 时间管理/">FreeRTOS 时间管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/20/RTOS/FreeRTOS/FreeRTOS FreeRTOS 任务切换/">FreeRTOS FreeRTOS 任务切换</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/18/RTOS/FreeRTOS/FreeRTOS 任务切换/">FreeRTOS 任务切换</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/Python/Python 3 正则表达式/">Python3基础  正则表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/24/UAV/无人机基础知识总结/">无人机基础知识总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/17/HardWare/TI锂离子电池组管理器-电量监测计BQ40Z50-R1学习笔记/">TI锂离子电池组管理器 电量监测计BQ40Z50-R1学习笔记</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">yphfree的学习笔记.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
