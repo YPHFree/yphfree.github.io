@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>FreeRTOS 事件标志组 | yphfree的学习笔记</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">FreeRTOS 事件标志组</h1><a id="logo" href="/.">yphfree的学习笔记</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">FreeRTOS 事件标志组</h1><div class="post-meta">Oct 5, 2017<span> | </span><span class="category"><a href="/categories/FreeRTOS/">FreeRTOS</a></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#事件标志组简介"><span class="toc-number">1.</span> <span class="toc-text">事件标志组简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、事件位-事件标志"><span class="toc-number">1.1.</span> <span class="toc-text">1、事件位(事件标志)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、事件组"><span class="toc-number">1.2.</span> <span class="toc-text">2、事件组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、事件标志组和事件位的数据类型"><span class="toc-number">1.3.</span> <span class="toc-text">3、事件标志组和事件位的数据类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建事件标志组"><span class="toc-number">2.</span> <span class="toc-text">创建事件标志组</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#函数-xEventGroupCreate"><span class="toc-number">2.1.</span> <span class="toc-text">函数 xEventGroupCreate()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#函数-xEventGroupCreateStatic"><span class="toc-number">2.2.</span> <span class="toc-text">函数 xEventGroupCreateStatic()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#16-3-设置事件位"><span class="toc-number">3.</span> <span class="toc-text">16.3 设置事件位</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、函数-xEventGroupClearBits"><span class="toc-number">3.1.</span> <span class="toc-text">1、函数 xEventGroupClearBits()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、函数-xEventGroupSetBits"><span class="toc-number">3.2.</span> <span class="toc-text">2、函数 xEventGroupSetBits()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、-函数-xEventGroupSetBitsFromISR"><span class="toc-number">3.3.</span> <span class="toc-text">3、 函数 xEventGroupSetBitsFromISR()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#获取事件标志组值"><span class="toc-number">4.</span> <span class="toc-text">获取事件标志组值</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、函数-xEventGroupGetBits"><span class="toc-number">4.1.</span> <span class="toc-text">1、函数 xEventGroupGetBits()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、函数-xEventGroupGetBitsFromISR"><span class="toc-number">4.2.</span> <span class="toc-text">2、函数 xEventGroupGetBitsFromISR()</span></a></li></ol></li></ol></div></div><div class="post-content"><p>使用信号量来同步的话任务只能与单个的事件或任务进行同步。有时候某个任务可能会需要与多个事件或任务进行同步，此时信号量就无能为力了。 FreeRTOS 为此提供了一个可选的解决方法，那就是事件标志组。</p>
+<ul>
+<li>事件标志组简介</li>
+<li>创建事件标志组</li>
+<li>设置事件位</li>
+<li>获取事件标志组值</li>
+<li>等待指定的事件位</li>
+</ul>
+<h2 id="事件标志组简介"><a href="#事件标志组简介" class="headerlink" title="事件标志组简介"></a>事件标志组简介</h2><h3 id="1、事件位-事件标志"><a href="#1、事件位-事件标志" class="headerlink" title="1、事件位(事件标志)"></a>1、事件位(事件标志)</h3><p>事件位用来表明某个事件是否发生， 事件位通常用作事件标志， 比如下面的几个例子： </p>
+<ul>
+<li>当收到一条消息并且把这条消息处理掉以后就可以将某个位(标志)置 1，当队列中没有<br>消息需要处理的时候就可以将这个位(标志)置 0。  </li>
+<li>当把队列中的消息通过网络发送输出以后就可以将某个位(标志)置 1，当没有数据需要<br>从网络发送出去的话就将这个位(标志)置 0。   </li>
+<li>现在需要向网络中发送一个心跳信息，将某个位(标志)置 1。现在不需要向网络中发送<br>心跳信息，这个位(标志)置 0。  </li>
+</ul>
+<h3 id="2、事件组"><a href="#2、事件组" class="headerlink" title="2、事件组"></a>2、事件组</h3><p>一个事件组就是一组的事件位， 事件组中的事件位通过位编号来访问，同样，以上面列出的三个例子为例： </p>
+<ul>
+<li>事件标志组的 bit0 表示队列中的消息是否处理掉。</li>
+<li>事件标志组的 bit1 表示是否有消息需要从网络中发送出去。</li>
+<li>事件标志组的 bit2 表示现在是否需要向网络发送心跳信息。</li>
+</ul>
+<h3 id="3、事件标志组和事件位的数据类型"><a href="#3、事件标志组和事件位的数据类型" class="headerlink" title="3、事件标志组和事件位的数据类型"></a>3、事件标志组和事件位的数据类型</h3><p>事件标志组的数据类型为 EventGroupHandle_t， 当 configUSE_16_BIT_TICKS 为 1 的时候事件标志组可以存储 8 个事件位，当 configUSE_16_BIT_TICKS 为 0 的时候事件标志组存储 24个事件位。       </p>
+<p>事件标志组中的所有事件位都存储在一个无符号的 EventBits_t 类型的变量中， EventBits_t在 event_groups.h 中有如下定义：<br><figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">typedef TickType_t EventBits_t<span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
+<p>数据类型 TickType_t 在文件 portmacro.h 中有如下定义：        </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span>( configUSE_16_BIT_TICKS == 1 )</span></span><br><span class="line">	<span class="keyword">typedef</span> <span class="keyword">uint16_t</span> TickType_t;</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">define</span> portMAX_DELAY ( TickType_t ) 0xffff</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">	<span class="keyword">typedef</span> <span class="keyword">uint32_t</span> TickType_t;</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">define</span> portMAX_DELAY ( TickType_t ) 0xffffffffUL</span></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">define</span> portTICK_TYPE_IS_ATOMIC 1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>可以看出当 configUSE_16_BIT_TICKS 为 0 的时候 TickType_t 是个 32 位的数据类型， 因此 EventBits_t 也是个 32 位的数据类型。 EventBits_t 类型的变量可以存储 24 个事件位，另外的那高 8 位有其他用。 事件位 0 存放在这个变量的 bit0 上，变量的 bit1 就是事件位 1，以此类推。对于 STM32 来说一个事件标志组最多可以存储 24 个事件位，</p>
+<h2 id="创建事件标志组"><a href="#创建事件标志组" class="headerlink" title="创建事件标志组"></a>创建事件标志组</h2><p>FreeRTOS 提供了两个用于创建事件标志组的函数：</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xEventGroupCreate()</td>
+<td>使用动态方法创建事件标志组。</td>
+</tr>
+<tr>
+<td>xEventGroupCreateStatic()</td>
+<td>使用静态方法创建事件标志组</td>
+</tr>
+</tbody>
+</table>
+<h3 id="函数-xEventGroupCreate"><a href="#函数-xEventGroupCreate" class="headerlink" title="函数 xEventGroupCreate()"></a>函数 xEventGroupCreate()</h3><p>此函数用于创建一个事件标志组，所需要的内存通过动态内存管理方法分配。由于内部处理的原因 ，事 件 标 志 组 可 用的 bit数 取决于configUSE_16_BIT_TICKS ， 当configUSE_16_BIT_TICKS1 为 1 的 时 候 事 件 标 志 组 有 8 个 可 用 的 位 (bit0~bit7) ， 当configUSE_16_BIT_TICKS 为 0 的时候事件标志组有 24 个可用的位(bit0~bit23)。 EventBits_t 类型的变量用来存储事件标志组中的各个事件位，函数原型如下：<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EventGroupHandle_t xEventGroupCreate( <span class="name">void</span> )</span><br></pre></td></tr></table></figure></p>
+<p><strong>参数：</strong><br>无。        </p>
+<p><strong>返回值：</strong><br>NULL: 事件标志组创建失败。<br>其他值: 创建成功的事件标志组句柄。            </p>
+<h3 id="函数-xEventGroupCreateStatic"><a href="#函数-xEventGroupCreateStatic" class="headerlink" title="函数 xEventGroupCreateStatic()"></a>函数 xEventGroupCreateStatic()</h3><p>此函数用于创建一个事件标志组定时器，所需要的内存需要用户自行分配，此函数原型如下：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">EventGroupHandle_t</span> <span class="selector-tag">xEventGroupCreateStatic</span>( StaticEventGroup_t *pxEventGroupBuffer )</span><br></pre></td></tr></table></figure>
+<p><strong>参数：</strong><br>pxEventGroupBuffer： 参数指向一个 StaticEventGroup_t 类型的变量，用来保存事件标志组结构体。  </p>
+<p><strong>返回值：</strong><br>NULL:   事件标志组创建失败。<br>其他值: 创建成功的事件标志组句柄。       </p>
+<h2 id="16-3-设置事件位"><a href="#16-3-设置事件位" class="headerlink" title="16.3 设置事件位"></a>16.3 设置事件位</h2><p>FreeRTOS 提供了 4 个函数用来设置事件标志组中事件位(标志)，事件位(标志)的设置包括清零和置 1 两种操作。</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xEventGroupClearBits()</td>
+<td>将指定的事件位清零，用在任务中。</td>
+</tr>
+<tr>
+<td>xEventGroupClearBitsFromISR()</td>
+<td>将指定的事件位清零，用在中断服务函数中</td>
+</tr>
+<tr>
+<td>xEventGroupSetBits()</td>
+<td>将指定的事件位置 1，用在任务中。</td>
+</tr>
+<tr>
+<td>xEventGroupSetBitsFromISR()</td>
+<td>将指定的事件位置 1，用在中断服务函数中。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1、函数-xEventGroupClearBits"><a href="#1、函数-xEventGroupClearBits" class="headerlink" title="1、函数 xEventGroupClearBits()"></a>1、函数 xEventGroupClearBits()</h3><p><strong>将事件标志组中的指定事件位清零，此函数只能用在任务中，不能用在中断服务函数中！</strong>中断服务函数有其他的 API 函数。函数原型如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">EventBits_t <span class="title">xEventGroupClearBits</span><span class="params">( EventGroupHandle_t xEventGroup,</span></span></span><br><span class="line"><span class="function"><span class="params">                                   <span class="keyword">const</span> EventBits_t uxBitsToClear )</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p><strong>参数：</strong><br>xEventGroup： 要操作的事件标志组的句柄。<br>uxBitsToClear： 要清零的事件位， 比如要清除 bit3 的话就设置为 0X08。可以同时清除多个bit，如设置为 0X09 的话就是同时清除 bit3 和 bit0。     </p>
+<p><strong>返回值：</strong><br>任何值： 将指定事件位清零之前的事件组值。        </p>
+<p>###2、函数 xEventGroupClearBitsFromISR()<br><strong>此函数为函数 xEventGroupClearBits()的中断级版本</strong>，也是将指定的事件位(标志)清零。此函数用在中断服务函数中，此函数原型如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BaseType_t <span class="title">xEventGroupClearBitsFromISR</span><span class="params">( EventGroupHandle_t xEventGroup,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        <span class="keyword">const</span> EventBits_t uxBitsToSet )</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p><strong>参数：</strong><br>xEventGroup： 要操作的事件标志组的句柄。<br>uxBitsToClear： 要清零的事件位，比如要清除 bit3 的话就设置为 0X08。可以同时清除多个bit，如设置为 0X09 的话就是同时清除 bit3 和 bit0。   </p>
+<p><strong>返回值：</strong><br>pdPASS： 事件位清零成功。<br>pdFALSE: 事件位清零失败。      </p>
+<h3 id="2、函数-xEventGroupSetBits"><a href="#2、函数-xEventGroupSetBits" class="headerlink" title="2、函数 xEventGroupSetBits()"></a>2、函数 xEventGroupSetBits()</h3><p>设置指定的事件位为 1，此函数只能用在任务中，不能用于中断服务函数，此函数原型如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">EventBits_t <span class="title">xEventGroupSetBits</span><span class="params">( EventGroupHandle_t xEventGroup,</span></span></span><br><span class="line"><span class="function"><span class="params">                                <span class="keyword">const</span> EventBits_t uxBitsToSet )</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p><strong>参数：</strong><br>xEventGroup： 要操作的事件标志组的句柄。<br>uxBitsToClear： 指定要置 1 的事件位，比如要将 bit3 值 1 的话就设置为 0X08。可以同时将多个 bit 置 1，如设置为 0X09 的话就是同时将 bit3 和 bit0 置 1。      </p>
+<p><strong>返回值：</strong><br>任何值： 在将指定事件位置 1 后的事件组值。 </p>
+<h3 id="3、-函数-xEventGroupSetBitsFromISR"><a href="#3、-函数-xEventGroupSetBitsFromISR" class="headerlink" title="3、 函数 xEventGroupSetBitsFromISR()"></a>3、 函数 xEventGroupSetBitsFromISR()</h3><p>此函数也用于将指定的事件位置 1，此函数是 xEventGroupSetBits()的中断版本，用在中断服务函数中，函数原型如下：<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BaseType_t </span>xEventGroupSetBitsFromISR( EventGroupHandle_t xEventGroup,</span><br><span class="line">                                       const EventBits_t uxBitsToSet,</span><br><span class="line">                                      <span class="keyword">BaseType_t </span>* pxHigherPriorityTaskWoken )<span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>参数：</strong><br>xEventGroup： 要操作的事件标志组的句柄。<br>uxBitsToClear： 指定要置 1 的事件位，比如要将 bit3 值 1 的话就设置为 0X08。可以同时将多个 bit 置 1，如设置为 0X09 的话就是同时将 bit3 和 bit0 置 1。<br>pxHigherPriorityTaskWoken： 标记退出此函数以后是否进行任务切换，这个变量的值函数会自动设置的，用户不用进行设置，用户只需要提供一个变量来保存这个值就行了。当此值为 pdTRUE 的时候在退出中断服务函数之前一定要进行一次任务切换。        </p>
+<p><strong>返回值：</strong><br>pdPASS： 事件位置 1 成功。<br>pdFALSE: 事件位置 1 失败。    </p>
+<h2 id="获取事件标志组值"><a href="#获取事件标志组值" class="headerlink" title="获取事件标志组值"></a>获取事件标志组值</h2><p>我们可以通过 FreeRTOS 提供的 API 函数来查询事件标准组值， FreeRTOS 一共提供了两个这样的 API 函数，如表 </p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xEventGroupGetBits()</td>
+<td>获取当前事件标志组的值(各个事件位的值)，用在任务中。</td>
+</tr>
+<tr>
+<td>xEventGroupGetBitsFromISR()</td>
+<td>获取当前事件标志组的值，用在中断服务函数中。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1、函数-xEventGroupGetBits"><a href="#1、函数-xEventGroupGetBits" class="headerlink" title="1、函数 xEventGroupGetBits()"></a>1、函数 xEventGroupGetBits()</h3><p>此函数用于获取当前事件标志组的值，也就是各个事件位的值。此函数用在任务中，不能用在中断服务函数中。此函数是个宏，真正执行的是函数 xEventGroupClearBits()，函数原型如下：<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EventBits_t xEventGroupGetBits( <span class="name">EventGroupHandle_t</span> xEventGroup</span><br></pre></td></tr></table></figure></p>
+<p><strong>参数：</strong><br>xEventGroup： 要获取的事件标志组的句柄。        </p>
+<p><strong>返回值：</strong><br>任何值：当前事件标志组的值。 </p>
+<h3 id="2、函数-xEventGroupGetBitsFromISR"><a href="#2、函数-xEventGroupGetBitsFromISR" class="headerlink" title="2、函数 xEventGroupGetBitsFromISR()"></a>2、函数 xEventGroupGetBitsFromISR()</h3><p>获取当前事件标志组的值，此函数是 xEventGroupGetBits()的中断版本， 函数原型如下：<br><figure class="highlight plain"><figcaption><span>xEventGroupGetBitsFromISR( EventGroupHandle_t xEventGroup )</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">```</span><br><span class="line"></span><br><span class="line">**参数：**</span><br><span class="line">xEventGroup： 要获取的事件标志组的句柄。        </span><br><span class="line"></span><br><span class="line">**返回值：**</span><br><span class="line">任何值： 当前事件标志组的值。  </span><br><span class="line"></span><br><span class="line">## 等待指定的事件位</span><br><span class="line">某个任务可能需要与多个事件进行同步，那么这个任务就需要等待并判断多个事件位(标志)，使用函数 xEventGroupWaitBits()可以完成这个功能。调用函数以后如果任务要等待的事件位还没有准备好(置 1 或清零)的话任务就会进入阻塞态，直到阻塞时间到达或者所等待的事件位准备好。</span><br></pre></td></tr></table></figure></p>
+<p>EventBits_t xEventGroupWaitBits( EventGroupHandle_t xEventGroup,<br>                                  const EventBits_t uxBitsToWaitFor,<br>                                   const BaseType_t xClearOnExit,<br>                                   const BaseType_t xWaitForAllBits,<br>                                   const TickType_t xTicksToWait );<br><code>`</code></p>
+<p><strong>参数：</strong><br>xEventGroup： 指定要等待的事件标志组。<br>uxBitsToWaitFord： 指定要等待的事件位，比如要等待 bit0和(或)bit2的时候此参数就是 0X05，如果要等待 bit0 和(或)bit1 和(或)bit2 的时候此参数就是 0X07，以此类推。<br>xClearOnExit： 此参数要是为 pdTRUE 的话，那么在退出此函数之前由参数 uxBitsToWaitFor所设置的这些事件位就会清零。如果设置位 pdFALSE 的话这些事件位就不会改变。<br>xWaitForAllBits： 此参数如果设置为 pdTRUE 的话， 当 uxBitsToWaitFor 所设置的这些事件位都置 1， 或者指定的阻塞时间到的时候函数 xEventGroupWaitBits()才会返回。 当此函数为 pdFALSE 的话，只要 uxBitsToWaitFor 所设置的这些事件位其中的任意一个置1，或者指定的阻塞时到的话函 数xEventGroupWaitBits()就会返回。<br>xTicksToWait： 设置阻塞时间，单位为节拍数。</p>
+</div><div class="tags"><a href="/tags/FreeRTOS/">FreeRTOS</a></div><div class="post-nav"><a class="pre" href="/2017/10/05/RTOS/FreeRTOS/FreeRTOS 软件定时器/">FreeRTOS 软件定时器</a><a class="next" href="/2017/10/02/RTOS/FreeRTOS/FreeRTOS 信号量/">FreeRTOS 信号量</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://yoursite.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C语言学习/">C语言学习</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/FreeRTOS/">FreeRTOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Numpy学习笔记/">Numpy学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PyQt5快速开发与实战/">PyQt5快速开发与实战</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python学习笔记/">Python学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/STM32学习笔记/">STM32学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/单片机/">单片机</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/嵌入式C-C-学习笔记/">嵌入式C/C++学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/嵌入式开发学习笔记/">嵌入式开发学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/硬件学习笔记/">硬件学习笔记</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/嵌入式软件/" style="font-size: 15px;">嵌入式软件</a> <a href="/tags/C-算法/" style="font-size: 15px;">C 算法</a> <a href="/tags/硬件基础/" style="font-size: 15px;">硬件基础</a> <a href="/tags/锂电池/" style="font-size: 15px;">锂电池</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Python3/" style="font-size: 15px;">Python3</a> <a href="/tags/嵌入式项目/" style="font-size: 15px;">嵌入式项目</a> <a href="/tags/C/" style="font-size: 15px;">C</a> <a href="/tags/通信协议/" style="font-size: 15px;">通信协议</a> <a href="/tags/C51/" style="font-size: 15px;">C51</a> <a href="/tags/STM32基础/" style="font-size: 15px;">STM32基础</a> <a href="/tags/PyQt5/" style="font-size: 15px;">PyQt5</a> <a href="/tags/Python-Numpy/" style="font-size: 15px;">Python Numpy</a> <a href="/tags/FreeRTOS/" style="font-size: 15px;">FreeRTOS</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/04/10/Python/numpy/Numpy学习笔记/">Numpy学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/Python/Python 3 正则表达式/">Python3基础  正则表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/24/UAV/无人机基础知识总结/">无人机基础知识总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/20/RTOS/FreeRTOS/FreeRTOS 内存管理/">FreeRTOS 内存管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/17/HardWare/TI锂离子电池组管理器-电量监测计BQ40Z50-R1学习笔记/">TI锂离子电池组管理器 电量监测计BQ40Z50-R1学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/17/HardWare/TI单节电量计基本介绍/">TI单节电量计基本介绍</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/14/HardWare/锂电池充电电压与充电电流设定/">锂电池充电电压与充电电流设定</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/13/HardWare/锂电池充电原理/">锂电池充电原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/08/RTOS/FreeRTOS/FreeRTOS 任务通知/">FreeRTOS 任务通知</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/05/RTOS/FreeRTOS/FreeRTOS 软件定时器/">FreeRTOS 软件定时器</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">yphfree的学习笔记.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
