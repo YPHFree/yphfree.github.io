@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>LIN入门书学习笔记 | yphfree的学习笔记</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">LIN入门书学习笔记</h1><a id="logo" href="/.">yphfree的学习笔记</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">LIN入门书学习笔记</h1><div class="post-meta">Sep 29, 2017<span> | </span><span class="category"><a href="/categories/汽车总线/">汽车总线</a></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#LIN-是什么"><span class="toc-number">1.</span> <span class="toc-text">LIN 是什么?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LIN-子网-Cluster-与节点-Node"><span class="toc-number">1.1.</span> <span class="toc-text">LIN 子网(Cluster)与节点(Node)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#主-从机节点与主-从机任务"><span class="toc-number">1.2.</span> <span class="toc-text">主/从机节点与主/从机任务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#主机任务负责："><span class="toc-number">1.2.1.</span> <span class="toc-text">主机任务负责：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#从机任务"><span class="toc-number">1.2.2.</span> <span class="toc-text">从机任务</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LIN-的特点"><span class="toc-number">2.</span> <span class="toc-text">LIN 的特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LIN协议层"><span class="toc-number">3.</span> <span class="toc-text">LIN协议层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#帧结构"><span class="toc-number">3.1.</span> <span class="toc-text">帧结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#同步间隔段-Break-Field"><span class="toc-number">3.1.1.</span> <span class="toc-text">同步间隔段 (Break Field)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#同步段-Sync-Byte-Field"><span class="toc-number">3.1.2.</span> <span class="toc-text">同步段(Sync Byte Field)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#受保护ID段"><span class="toc-number">3.1.3.</span> <span class="toc-text">受保护ID段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#数据段"><span class="toc-number">3.1.4.</span> <span class="toc-text">数据段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#校验和段"><span class="toc-number">3.1.5.</span> <span class="toc-text">校验和段</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#帧的类型"><span class="toc-number">3.2.</span> <span class="toc-text">帧的类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#无条件帧"><span class="toc-number">3.2.1.</span> <span class="toc-text">无条件帧</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#事件触发帧"><span class="toc-number">3.2.2.</span> <span class="toc-text">事件触发帧</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#偶发帧"><span class="toc-number">3.2.3.</span> <span class="toc-text">偶发帧</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#诊断帧"><span class="toc-number">3.2.4.</span> <span class="toc-text">诊断帧</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#保留帧"><span class="toc-number">3.2.5.</span> <span class="toc-text">保留帧</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#进度表"><span class="toc-number">3.3.</span> <span class="toc-text">进度表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#状态机-State-Machine-实现"><span class="toc-number">3.4.</span> <span class="toc-text">状态机(State Machine)实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#主机任务的状态机"><span class="toc-number">3.4.1.</span> <span class="toc-text">主机任务的状态机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#从机任务的状态机"><span class="toc-number">3.4.2.</span> <span class="toc-text">从机任务的状态机</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#网络管理"><span class="toc-number">3.5.</span> <span class="toc-text">网络管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#唤醒"><span class="toc-number">3.5.1.</span> <span class="toc-text">唤醒</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#休眠"><span class="toc-number">3.5.2.</span> <span class="toc-text">休眠</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#状态管理"><span class="toc-number">3.6.</span> <span class="toc-text">状态管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#网络报告"><span class="toc-number">3.6.1.</span> <span class="toc-text">网络报告</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#节点内部报告"><span class="toc-number">3.6.2.</span> <span class="toc-text">节点内部报告</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#帧收发的硬件实现"><span class="toc-number">3.7.</span> <span class="toc-text">帧收发的硬件实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组成"><span class="toc-number">3.8.</span> <span class="toc-text">组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LIN的硬件特点"><span class="toc-number">3.9.</span> <span class="toc-text">LIN的硬件特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#协议控制器"><span class="toc-number">3.10.</span> <span class="toc-text">协议控制器</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#实现方案"><span class="toc-number">3.10.0.1.</span> <span class="toc-text">实现方案</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总线收发器"><span class="toc-number">3.11.</span> <span class="toc-text">总线收发器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#信号处理、配置、识别、诊断"><span class="toc-number">4.</span> <span class="toc-text">信号处理、配置、识别、诊断</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#传输层"><span class="toc-number">4.1.</span> <span class="toc-text">传输层</span></a></li></ol></li></ol></div></div><div class="post-content"><h2 id="LIN-是什么"><a href="#LIN-是什么" class="headerlink" title="LIN 是什么?"></a>LIN 是什么?</h2><p>LIN 是 Local Interconnect Network 的缩写，是基于 UART/SCI(Universal Asynchronous Receiver-Transmitter /Serial Communication Interface，通用异步收发器/串行通信接口)的低成本串行通信协议。可用于汽车、家电、办公设备等多种领域。</p>
+<h3 id="LIN-子网-Cluster-与节点-Node"><a href="#LIN-子网-Cluster-与节点-Node" class="headerlink" title="LIN 子网(Cluster)与节点(Node)"></a>LIN 子网(Cluster)与节点(Node)</h3><p>LIN 网络与主干线 CAN(Controller Area Network，控制器局域网)总线相连时，需要加入 CAN-LIN 网关，一般由主机节点来充当。</p>
+<ol>
+<li>由于 LIN 网络在汽车中一般不独立存在，经常与上层网络(如 CAN)相连，因此子网的概念是相对于上层网络而言。在不强调与上层网络相连的情况下，后面也称作 LIN 网络。</li>
+<li>一个节点不一定对应一个 ECU(Electronic Control Unit，电子控制单元)，因为一个 ECU 可能提供多个LIN 接口，并且这些接口可能连接到不同的 LIN 通信子网中。</li>
+</ol>
+<p>节点应用层向下层传输信号和消息。信号和消息位于帧中的数据段，是节点向其他节点传达的实质信息。它们之间的区别在于信号封装于信号携带帧 (帧 ID 范围在 0x00～0x3B 之间)中，用于在运行状态传递上层发生的事件，如温度传感器的测量结果等。消息封装于诊断帧(帧 ID 为 0x3C 或 0x3D，)中，是有固定格式、最大长度不超过 4095 字节的信息，例如第 5 章介绍的服务请求。应用程序通过信号处理实现信号的传递，通过传输层实现消息的传递。</p>
+<h3 id="主-从机节点与主-从机任务"><a href="#主-从机节点与主-从机任务" class="headerlink" title="主/从机节点与主/从机任务"></a>主/从机节点与主/从机任务</h3><p>LIN 的拓扑结构为单线总线，应用了单一主机多从机的概念。总线电平为 12V，传输位速率(Bitrate)最高为20kbps。由于物理层限制，一个 LIN 网络最多可以连接 16 个节点，典型应用一般都在 12 个节点以下，主机节点有且只有一个，从机节点有 1 到 15 个。</p>
+<p>主机节点(Master Node)包含主机任务(Master Task)和从机任务(Slave Task)，从机节点(Slave Node)只包含从<br>机任务。</p>
+<h4 id="主机任务负责："><a href="#主机任务负责：" class="headerlink" title="主机任务负责："></a>主机任务负责：</h4><p>(1) 调度总线上帧的传输次序；<br>(2) 监测数据，处理错误；<br>(3) 作为标准时钟参考；<br>(4) 接收从机节点发出的总线唤醒命令。    </p>
+<h4 id="从机任务"><a href="#从机任务" class="headerlink" title="从机任务"></a>从机任务</h4><p>从机任务不能够主动发送数据，需要接收主机发送的帧头(帧的起始部分，参照 3.1 节的图 3.1)，根据帧头<br>所包含的信息(这里指帧 ID，详细内容参照 3.1.3 节)判断：<br>(1) 发送应答(帧中除帧头外剩下的部分，参照 3.1 节的图 3.1)；<br>(2) 接收应答；<br>(3) 既不接收也不发送应答。                                             </p>
+<h2 id="LIN-的特点"><a href="#LIN-的特点" class="headerlink" title="LIN 的特点"></a>LIN 的特点</h2><p>LIN 具有以下特点：<br>(1) 网络由一个主机节点和多个从机节点构成。<br>(2) 使用 LIN 可以大幅度的削减成本。<br>(3)信号传输具有确定性，传播时间可以提前计算出。<br>(4) LIN 具有可预测的 EMC性能，为了限制EMI强度， LIN 协议规定最大位速率为 20kbps。<br>(5) LIN 提供信号处理、配置、识别和诊断四项功能。           </p>
+<h2 id="LIN协议层"><a href="#LIN协议层" class="headerlink" title="LIN协议层"></a>LIN协议层</h2><h3 id="帧结构"><a href="#帧结构" class="headerlink" title="帧结构"></a>帧结构</h3><p>帧(Frame)包含帧头(Header)和应答(Response)两部分。主机任务负责发送帧头；从机任务接收帧头并对帧头所包含信息进行解析，然后决定是发送应答，还是接收应答，还是不作任何反应。</p>
+<p>帧头包括<strong>同步间隔段、同步段以及PID  (Protected Identifier，受保护ID )段，应答包括数据段和校验和段。</strong></p>
+<p>值“0”为显性电平(Dominant)，值“1”为隐性电平(Recessive)，总线上实行“线-与”：当总线上有<br>大于等于一个节点发送显性电平时，总线呈显性电平；所有的节点都发送隐性电平或不发送信息(不发送任何信息时总线默认呈隐性电平)时，总线才呈现隐性电平，即显性电平起主导作用。图中帧间隔为帧之间的间隔；应答间隔为帧头和应答之间的间隔；字节间间隔包括同步段和受保护ID段之间的间隔、数据段各字节间之间的间隔以及数据段最后一个字节和校验和段之间的间隔。</p>
+<p>帧间隔| 同步间隔段 | 同步段 |字节间间隔| 受保护ID段 |应答间隔| 数据段 |字节间隔| 校验和 |帧间隔 </p>
+<h4 id="同步间隔段-Break-Field"><a href="#同步间隔段-Break-Field" class="headerlink" title="同步间隔段 (Break Field)"></a>同步间隔段 (Break Field)</h4><p>同步间隔段由同步间隔(Break)和同步间隔段间隔符(Break Delimiter)构成，如图 3.3所示。同步间隔是至少(注1)持续 13 位(以主机节点的位速率为准)的显性电平，由于帧中的所有间隔或总线空闲时都应保持隐性电平，并且帧中的任何其它字段都不会发出大于 9 位的显性电平，因此同步间隔可以标志一个帧的开始。同步间隔段的间隔符是至少持续 1 位的隐性电平。</p>
+<h4 id="同步段-Sync-Byte-Field"><a href="#同步段-Sync-Byte-Field" class="headerlink" title="同步段(Sync Byte Field)"></a>同步段(Sync Byte Field)</h4><p><strong>字节域(Byte Field)</strong> 字节域包括<strong>1 位起始位(Start Bit，显性) + 8位数据位 + 1 位停止位(Stop Bit，隐性)</strong>，是一种标准 UART 数据传输格式，如图 3.4 所示。在 LIN 的一帧当中，除了上一节讲述的同步间隔段，后面的各段都是通过字节域的格式传输的。在 LIN 帧中，数据传输都是先发送LSB(Least Significant Bit，最低有效位)，最后发送 MSB(Most Significant Bit，最高有效位)。</p>
+<p>LIN 同步以下降沿为判断标志，采用字节 0x55(转换为二进制为 01010101b)</p>
+<p>从机节点可以不采用精度高的时钟，而采用片上振荡器等精度和成本相对较低的时钟，由此带来的与主机节点时钟产生的偏差，需要通过同步段进行调整，调整的结果是使从机节点数据的位速率与主机节点一致。同步段用于同步的基准时钟为主机节点的时钟。从机节点通过接收主机节点发出的同步段，计算出主机节点位速率，根据计算结果对自身的位速率重新作调整。计算公式如下：            </p>
+<p>1位时间 ＝( 第7位的下降沿时刻 - 起始位的下降沿时刻 ) / 8         </p>
+<p>通过计算，可以得到主机节点实际传输 1 位所用的时间，即位速率。        </p>
+<h4 id="受保护ID段"><a href="#受保护ID段" class="headerlink" title="受保护ID段"></a>受保护ID段</h4><p>受保护 ID 段的前 6 位叫作帧 ID(Frame ID)，加上两个奇偶校验位后称作受保护 ID。</p>
+<p>帧 ID 的范围在 0x00～0x3F 之间，共 64 个。帧 ID 标识了帧的类别和目的地。从机任务对于帧头作出的反应(接收/发送/忽略应答部分)都是依据帧 ID 判断的。如果帧 ID 传输错误，将会导致信号无法正确到达目的地，因此引入奇偶校验位。校验公式如下，其中“⊕”代表“异或”运算， “¬”代表“取非”运算。</p>
+<p>P0 = ID0 ⊕ ID1 ⊕ ID2 ⊕ ID4<br>P1 = ¬ (ID1 ⊕ ID3 ⊕ ID4 ⊕ ID5)       </p>
+<p>由公式可以看出， PID 不会出现全 0 或全 1 的情况，因此，如果从机节点收到了“0xFF”或“0x00”，可判断为传输错误。    </p>
+<p>依据帧 ID 不同将帧进行分类:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">帧的类型</th>
+<th style="text-align:center">帧ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">帧信号携带</td>
+<td style="text-align:center">无条件帧</td>
+<td>0x00 ～ 0x3B</td>
+</tr>
+<tr>
+<td style="text-align:center">帧信号携带</td>
+<td style="text-align:center">无条件帧</td>
+<td>0x00 ～ 0x3B</td>
+</tr>
+<tr>
+<td style="text-align:center">帧信号携带</td>
+<td style="text-align:center">无条件帧</td>
+<td>0x00 ～ 0x3B</td>
+</tr>
+<tr>
+<td style="text-align:center">诊断帧</td>
+<td style="text-align:center">主机请求帧</td>
+<td>0x3C</td>
+</tr>
+<tr>
+<td style="text-align:center">诊断帧</td>
+<td style="text-align:center">从机应答帧</td>
+<td>0x3F</td>
+</tr>
+<tr>
+<td style="text-align:center">保留帧</td>
+<td style="text-align:center">0x3E ，0x3F</td>
+</tr>
+</tbody>
+</table>
+<p><strong>从机应答帧是一个完整的帧，与帧结构中的“应答”   (帧的一部分)不同，注意区别。</strong></p>
+<h4 id="数据段"><a href="#数据段" class="headerlink" title="数据段"></a>数据段</h4><p>节点发送的数据位于数据段，包含 1 到 8 个字节(注 1)，先发送编号最低的字节 DATA1，编号依次增加，</p>
+<p>数据段包含了两种数据类型，信号(Signal)和诊断消息(Diagnostic messages)。</p>
+<p>信号(Signal)由信号携带帧传递，一个帧 ID 对应的数据段可能包含一个或多个信号。信号更新时要保证其完整性，不能只更新一部分。一个信号通常由一个固定的节点发出，此节点称为该信号的发布节点(Publisher)；其余的一个或多个节点接收，它们称为信号的收听节点(Subscriber)(注 2)。</p>
+<p>诊断消息(Diagnostic message)由诊断帧传递，对消息内容的解析由数据自身和节点状态决定。</p>
+<p>注： </p>
+<ol>
+<li><p>协议没有规定帧中的哪一部分显示数据长度码的信息，数据的内容和长度是由系统设计者根据帧 ID 事先约定好的。</p>
+</li>
+<li><p>总线上的数据是以广播形式被发送到总线上的，任何节点均能接收，但并非所有信号对每个节点都有用。收听节点接收帧的应答是因为该节点的应用层会使用这些信号，而对于其余节点，由于用不到这些信号，所以没有必要作接收处理，将忽略帧的应答部分。发布和收听由哪个节点进行完全根据应用层的需要由软件或配置工具实现。一般情况下，对于一个帧中的应答，总线上只存在一个发布节点，否则就会出现错误。事件触发帧例外，可能存在零个、一个或多个发布节点。</p>
+</li>
+</ol>
+<h4 id="校验和段"><a href="#校验和段" class="headerlink" title="校验和段"></a>校验和段</h4><p>校验和段是对帧中所传输的内容进行校验，</p>
+<p>校验和分为标准型校验和(Classic Checksum)及增强型校验和(Enhanced Checksum)。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">校验和类型</th>
+<th style="text-align:center">校验对象</th>
+<th style="text-align:center">适合场合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">标准型校验和</td>
+<td style="text-align:center">数据段各字节</td>
+<td style="text-align:center">诊断帧，与 LIN1.x 从机节点通信</td>
+</tr>
+<tr>
+<td style="text-align:center">增强型校验和</td>
+<td style="text-align:center">数据段各字节以及受保护 ID</td>
+<td style="text-align:center">与 LIN2.x 从机节点通信(诊断帧除外)。</td>
+</tr>
+</tbody>
+</table>
+<p>采用标准型校验和还是增强型校验和由主机节点管理，发布节点和各收听节点根据帧 ID 来判断采用哪种校验和。</p>
+<p>校验方法为将校验对象的各字节作带进位二进制加法(每当结果大于等于 256 时就减去 255)，并将所得最终的和逐位取反，以该结果作为要发送的校验和。接收方根据校验和类型，对接收数据作相同的带进位二进制加法，最终的和不取反，并将该和与接收到的校验和作加法，如果结果为 0xFF，则校验和无误，这在一定程度上保证了数据传输的正确性。</p>
+<h3 id="帧的类型"><a href="#帧的类型" class="headerlink" title="帧的类型"></a>帧的类型</h3><h4 id="无条件帧"><a href="#无条件帧" class="headerlink" title="无条件帧"></a>无条件帧</h4><p>无条件帧是具有单一发布节点，无论信号是否发生变化，帧头都被无条件应答的帧。无条件帧在主机任务分配给它的固定的帧时隙(参照 3.3 节)中传输。总线上一旦有帧头发送出去，必须有从机任务作应答(即无条件发送应答)。</p>
+<p>事件触发帧的典型应用就是轮询四个车门的开关情况。与其利用无条件帧每个车门轮询一遍，不如同时对四个车门进行询问，如果其中一个车门打开了(事件发生)，该车门要对询问作应答，即事件触发的含义。这样做可以减小带宽，但同时会导致两种现象，其一就是没有车门被打开，即无节点应答——事件触发帧允许一帧中只有帧头无应答；另外一种情况就是冲突，即同时有大于等于两个车门被打开，对该问题同时作答——事件触发帧允许两个以上的节点对帧头作应答而不视为错误。当发生冲突时，主机节点需要重新作轮询，样会增加一些响应时间，但由于事件触发帧本身就用来处理低概率事件，总的来说还是节省了带宽。</p>
+<h4 id="事件触发帧"><a href="#事件触发帧" class="headerlink" title="事件触发帧"></a>事件触发帧</h4><p>事件触发帧是主机节点在一个帧时隙(参照 3.3 节)中查询各从机节点的信号是否发生变化时使用的帧，当存在多个发布节点时，通过冲突解决进度表(参照 3.3 节)来解决冲突。</p>
+<p>当从机节点信号发生变化的频率较低时，主机任务一次次地轮询各个信号会占用一定的带宽。为了减小带宽的占用，引入了事件触发帧的概念</p>
+<p>与事件触发帧关联的多个无条件帧需要满足以下 5 个条件：<br>(1) 数据段包含的数据字节数等长；<br>(2) 使用相同的校验和类型；<br>(3) 数据段的第一个字节为该无条件帧的受保护 ID，这样才能够知道应答是哪个关联的无条件帧发送出来的；<br>(4) 由不同的从机节点发布；<br>(5) 不能与事件触发帧处于同一个进度表(参照 3.3 节)中。</p>
+<h4 id="偶发帧"><a href="#偶发帧" class="headerlink" title="偶发帧"></a>偶发帧</h4><p>偶发帧是主机节点在同一帧时隙(参照 3.3 节)中当自身信号发生变化时向总线启动发送的帧。当存在多个关<br>联的应答信号变化时，通过事先设定的优先级来仲裁。</p>
+<p>与事件触发帧一样，偶发帧的应答也关联了一组无条件帧。规定偶发帧只能由主机节点作为发布节点。偶<br>、发帧的传输可能出现三种状况： </p>
+<p>1)当关联的无条件帧没有信号发生变化时，该时隙(参照 3.3 节)保持沉默，如图<br>3.12 第一个帧时隙所示，主机节点连帧头都不需要发送； </p>
+<p>2)当其中一个关联的无条件帧包含的信号发生了变化，<br>则发送该关联的无条件帧的应答部分； </p>
+<p>3)如果有两个或两个关联的无条件帧包含的信号发生了变化，则按照事先规定好的优先级，优先级较高的关联的无条件帧获得发送权，优先级较低的要等到下一个偶发帧的帧头到来时才能发送应答。</p>
+<p>由于主机节点是唯一的发布节点，所以主机节点事先就知道各个关联信号的优先级别，这样在传输时就不会产生冲突。引入偶发帧的目的在于为进度表(参照 3.3 节)增加一些动态特性——当主机节点的信号发生变化时才有通<br>信发生。事件触发帧和偶发帧反映了帧在不同时机(信号变化或未发生变化)的传输状况，引入它们的目的是为<br>了增加通信的灵活性。</p>
+<h4 id="诊断帧"><a href="#诊断帧" class="headerlink" title="诊断帧"></a>诊断帧</h4><p>诊断帧包括主机请求帧和从机应答帧，主要用于配置、识别和诊断用。主机请求帧(Master Request Frame，MRF)，帧 ID = 0x3C，应答部分的发布节点为主机节点；从机应答帧(Slave Response Frame， SRF)，帧 ID = 0x3D，应答部分的发布节点为从机节点。数据段规定为 8 个字节，一律采用标准型校验和。</p>
+<h4 id="保留帧"><a href="#保留帧" class="headerlink" title="保留帧"></a>保留帧</h4><p>保留帧的帧 ID 为 0x3E 和 0x3F，为将来扩展用。</p>
+<h3 id="进度表"><a href="#进度表" class="headerlink" title="进度表"></a>进度表</h3><p>进度表是帧的调度表，规定总线上帧的传输次序以及各帧在总线上的传输时间。进度表位于主机节点，主机任务根据应用层需要进行调度。进度表可以有多个，一般情况下，轮到某个进度表执行的时候，从该进度表规定的入口处开始顺序执行，到进度表的最后一个帧时，如果没有新的进度表启动，则返回到当前的进度表第一个帧循环执行；也有可能在执行某个进度表当中发生中断，执行另一个进度表后再返回，</p>
+<p>进度表除规定了帧 ID 的传输次序外，还规定了帧时隙(Frame Slot)的大小。帧时隙是进度表规定的一个帧的帧头起始到下一个的帧的帧头起始的时间。每个帧的帧时隙都可以不同，一个帧时隙对应了进度表的一个入口。</p>
+<h3 id="状态机-State-Machine-实现"><a href="#状态机-State-Machine-实现" class="headerlink" title="状态机(State Machine)实现"></a>状态机(State Machine)实现</h3><h4 id="主机任务的状态机"><a href="#主机任务的状态机" class="headerlink" title="主机任务的状态机"></a>主机任务的状态机</h4><p>当进度表启动后，主机任务依次发送同步间隔段、同步段和受保护 ID 段，</p>
+<p>—-&gt; 空闲—–进度表启动，准备传送帧—&gt;同步间隔段(发送同步间隔段)—&gt;同步段(发送同步段)—&gt;受保护ID段(发送受保护ID)<br>        |                                                                                              |<br>        |&lt;———————————————————————————————|</p>
+<h4 id="从机任务的状态机"><a href="#从机任务的状态机" class="headerlink" title="从机任务的状态机"></a>从机任务的状态机</h4><p>从机任务负责发布或者接听帧的应答。包括两个状态机：          </p>
+<ol>
+<li>同步间隔段和同步段检查器   </li>
+<li>帧处理器      </li>
+</ol>
+<h3 id="网络管理"><a href="#网络管理" class="headerlink" title="网络管理"></a>网络管理</h3><p>网络管理主要指的是网络的休眠和唤醒管理</p>
+<h4 id="唤醒"><a href="#唤醒" class="headerlink" title="唤醒"></a>唤醒</h4><p>当总线处于休眠状态时，主/从机节点都可以向总线上发送唤醒信号，唤醒信号持续 250μs～5ms。其余节点(除发送唤醒信号以外的节点)以大于 150μs 为阈值判定唤醒信号。每个从机节点必须在唤醒信号显性脉冲的结束处算起 100ms 以内准备接收来自主机的命令(帧头)；主机节点也必须被唤醒， 100ms 之内主机节点发送帧头开始通信。主机节点的同步间隔段也可以充当唤醒信号，由于从机节点需要作初始化处理，因此主机节点所发的这个帧有可能不会被正常接收。</p>
+<p>如果节点发送出唤醒信号后，在 150ms～250ms 之内没有接收到总线上的任何命令(帧头)，则可以重新发送一次唤醒信号。唤醒信号最多可以发送 3 次， 3 次之后，必须等待至少 1.5s 之后才可以再次发送唤醒信号</p>
+<h4 id="休眠"><a href="#休眠" class="headerlink" title="休眠"></a>休眠</h4><p>总线可以在两种情况下进入休眠：          </p>
+<p>(1) 利用诊断帧中的主机请求帧 0x3C 作休眠命令，要求数据段的第一个字节为 0x00，其余字节为 0xFF。休眠命令由主机节点发出，总线上的从机节点只判断数据段的第一个字节，其余字节忽略。从机节点在接收到休眠命令后，不一定要进入低功耗模式，根据应用层需要设置，</p>
+<p>(2) 当总线静默(没有显性和隐性电平之间的切换)4s～10s 时，节点自动进入休眠状态。    </p>
+<h3 id="状态管理"><a href="#状态管理" class="headerlink" title="状态管理"></a>状态管理</h3><p>状态管理是为了检测运行中的错误。错误一旦被发现，根据设计需要采取不同的措施进行排除，一种方法是简单替换掉错误节点，另一种方法是让发生问题的节点进入到自我保护/安全模式(Limp Home Mode)。</p>
+<h4 id="网络报告"><a href="#网络报告" class="headerlink" title="网络报告"></a>网络报告</h4><p>协议强制规定，每个从机节点都要在它发布的某个无条件帧中包含一个长度为一位的标量信号response_error，向主机节点报告自身状态。主机节点负责接收这个信号并且执行分析，如表所示。事件触发帧由于允许总线冲突，需特殊处理。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">response_error</th>
+<th style="text-align:center">主机节点对信号的解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">FALSE</td>
+<td style="text-align:center">从机节点操作正确</td>
+</tr>
+<tr>
+<td style="text-align:center">TRUE</td>
+<td style="text-align:center">从机节点有偶发错误</td>
+</tr>
+<tr>
+<td style="text-align:center">从机节点无应答</td>
+<td style="text-align:center">从机节点，总线或主机存在严重错误</td>
+</tr>
+</tbody>
+</table>
+<h4 id="节点内部报告"><a href="#节点内部报告" class="headerlink" title="节点内部报告"></a>节点内部报告</h4><p>节点自身需要设定两个状态位： Error_in_response 和 Successful_transfer。当发送或接收应答的时候发现错误，将置位 Error_in_response；成功传输则置位 Successful_transfer。节点需要将这两个状态位报告给应用层。</p>
+<h3 id="帧收发的硬件实现"><a href="#帧收发的硬件实现" class="headerlink" title="帧收发的硬件实现"></a>帧收发的硬件实现</h3><h3 id="组成"><a href="#组成" class="headerlink" title="组成"></a>组成</h3><p>收发 LIN 帧需要的硬件包括协议控制器(Protocol Controller)、总线收发器(Bus Transceiver)和 LIN 总线三部分</p>
+<h3 id="LIN的硬件特点"><a href="#LIN的硬件特点" class="headerlink" title="LIN的硬件特点"></a>LIN的硬件特点</h3><ul>
+<li>单线通信</li>
+<li>从机节点无需高精度时钟源</li>
+<li>EMI 低而且可控</li>
+<li>最高通信速率 20kbps</li>
+</ul>
+<h3 id="协议控制器"><a href="#协议控制器" class="headerlink" title="协议控制器"></a>协议控制器</h3><p>协议控制器的主体是一个基于 UART/SCI 的通信控制器，工作方式是半双工。协议控制器既可以使用专用模块实现，也可以用“UART/SCI+定时器”实现。发送时，协议控制器把二进制并行数据转变成高-低电平信号，并按照规定的串行格式(8 数据位， 1 停止位，无校验位)送往总线收发器；接收时，协议控制器把来自总线收发器的高-低电平信号按照同样的串行格式储存下来，然后再将储存结果转换成二进制并行数据。</p>
+<h5 id="实现方案"><a href="#实现方案" class="headerlink" title="实现方案"></a>实现方案</h5><p>依据硬件资源不同可以分为 3 类：</p>
+<p>1、UART/SCI+定时器+外部中断<br>2、硬件 LIN(Hardware LIN)<br>3、LIN 模块(LIN Module)，分别面向对成本和性能有不同侧重的应用。</p>
+<h3 id="总线收发器"><a href="#总线收发器" class="headerlink" title="总线收发器"></a>总线收发器</h3><p>总线收发器的主体是一个双向工作的电平转换器，完成协议控制器的高-低电平与 LIN 总线的隐性-显性电平(注 1)之间的转换。</p>
+<h2 id="信号处理、配置、识别、诊断"><a href="#信号处理、配置、识别、诊断" class="headerlink" title="信号处理、配置、识别、诊断"></a>信号处理、配置、识别、诊断</h2><p>使用的角度来看， LIN 提供四项功能——信号处理、配置、识别和诊断，这四项功能共同构成了 LIN 的应用层。传输层是配置、识别和诊断这三项功能的通信载体，实现应用层消息与帧之间的格式转换和传输。为了规范使用， LIN 为应用层和传输层定义了 API 接口，</p>
+<h3 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h3><p>传输层的任务单一，就是充当一个“翻译官”，把来自诊断服务的消息(Message)“翻译”成协议层可以处理的<strong>PDU (Packet Data Unit，分组数据单元)</strong>，或者反过来，把协议层收到的 PDU“翻译”成诊断服务需要的消息。消息到 PDU 的转换过程称为拆分(Packing)， PDU 到消息的转换过程称为重组(Unpacking)。 PDU 对应着帧结构的数据段，并通过诊断帧发送或接收。</p>
+</div><div class="tags"><a href="/tags/LIN/">LIN</a></div><div class="post-nav"><a class="pre" href="/2017/10/02/RTOS/FreeRTOS/FreeRTOS 信号量/">FreeRTOS 信号量</a><a class="next" href="/2017/09/29/RTOS/FreeRTOS/FreeRTOS 队列/">FreeRTOS 队列</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://yoursite.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android学习笔记/">Android学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CC2540/">CC2540</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/C语言学习/">C语言学习</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/FreeRTOS/">FreeRTOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Numpy学习笔记/">Numpy学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PyQt5快速开发与实战/">PyQt5快速开发与实战</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python学习笔记/">Python学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/STM32学习笔记/">STM32学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/单片机/">单片机</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/嵌入式开发学习笔记/">嵌入式开发学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据结构与算法之美学习笔记/">数据结构与算法之美学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据结构与算法之美学习笔记s/">数据结构与算法之美学习笔记s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/汽车总线/">汽车总线</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/硬件学习笔记/">硬件学习笔记</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/STM32基础/" style="font-size: 15px;">STM32基础</a> <a href="/tags/Android/" style="font-size: 15px;">Android</a> <a href="/tags/硬件基础/" style="font-size: 15px;">硬件基础</a> <a href="/tags/锂电池/" style="font-size: 15px;">锂电池</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Python3/" style="font-size: 15px;">Python3</a> <a href="/tags/C51/" style="font-size: 15px;">C51</a> <a href="/tags/嵌入式基础知识/" style="font-size: 15px;">嵌入式基础知识</a> <a href="/tags/CC2540/" style="font-size: 15px;">CC2540</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/嵌入式基础知识-通信协议/" style="font-size: 15px;">嵌入式基础知识 通信协议</a> <a href="/tags/Python-Numpy/" style="font-size: 15px;">Python Numpy</a> <a href="/tags/STM32项目/" style="font-size: 15px;">STM32项目</a> <a href="/tags/嵌入式基础知识-硬件基础知识/" style="font-size: 15px;">嵌入式基础知识 硬件基础知识</a> <a href="/tags/通信协议/" style="font-size: 15px;">通信协议</a> <a href="/tags/PyQt5/" style="font-size: 15px;">PyQt5</a> <a href="/tags/嵌入式基础知识-通信协议/" style="font-size: 15px;">嵌入式基础知识, 通信协议</a> <a href="/tags/FreeRTOS/" style="font-size: 15px;">FreeRTOS</a> <a href="/tags/LIN/" style="font-size: 15px;">LIN</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/09/30/Algorithm/Data_Structre_Algorithm/04、复杂度分析（下）：浅析最好、最坏、平均、均摊时间复杂度/">04、复杂度分析（下）：浅析最好、最坏、平均、均摊时间复杂度</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/30/MCU/Peripheral/STM32 摄像头OV7670/">04、复杂度分析（下）：浅析最好、最坏、平均、均摊时间复杂度</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/29/Algorithm/Data_Structre_Algorithm/03、复杂度分析（上）：如何分析、统计算法的执行效率和资源消耗？/">03、复杂度分析（上）：如何分析、统计算法的执行效率和资源消耗？</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/29/Algorithm/Data_Structre_Algorithm/02、如何抓住重点，系统高效地学习数据结构与算法？/">02、如何抓住重点，系统高效地学习数据结构与算法？</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/QRS/Wireless_Protocol/蓝牙4.0BLE协议栈技术入门/">QRS/Wireless_Protocol/蓝牙4.0BLE协议栈技术入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/QRS/Wireless_Protocol/蓝牙4.0BLE应用实例/">QRS/Wireless_Protocol/蓝牙4.0BLE应用实例</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/13/Android/Android学习笔记6——文件存储/">Android学习笔记6——文件存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/04/10/Python/numpy/Numpy学习笔记/">Numpy学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/Python/Python 3 正则表达式/">Python3基础  正则表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/Python/Python 网络编程/">Python3</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">yphfree的学习笔记.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
