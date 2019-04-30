@@ -1,0 +1,100 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>CAN协议简介 | yphfree的学习笔记</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">CAN协议简介</h1><a id="logo" href="/.">yphfree的学习笔记</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">CAN协议简介</h1><div class="post-meta">Sep 10, 2018<span> | </span><span class="category"><a href="/categories/汽车电子学习笔记/">汽车电子学习笔记</a></span></div><div class="post-content"><h3 id="CAN-简介"><a href="#CAN-简介" class="headerlink" title="CAN 简介"></a>CAN 简介</h3><p>CAN 是 Controller Area Network 的缩写（以下称为 CAN），是 ISO 国际标准化的串行通信协议,CAN 的高性能和可靠性已被认同，并被广泛地应用于工业自动化、船舶、医疗设备、工业设备等方面。现场总线是当今自动化领域技术发展的热点之一，被誉为自动化领域的计算机局域网。它的出现为分布式控制系统实现各节点之间实时、可靠的数据通信提供了强有力的技术支持。</p>
+<p>与 IIC、SPI 等具有时钟信号的通信方式不同，CAN 通信并不是以时钟信号来进行同步的。它只具有 CAN_High 和 CAN_Low 两条信号线，共同构成一组差分信号线，所以CAN 是以差分信号的形式进行通信的。</p>
+<p><strong>CAN控制器通过组成总线的2根线（CAN-H和CAN-L）的电位差来确定总线的电平，在任一时刻，总线上有2种电平：显性电平和隐性电平。发送方通过使总线电平发生变化，将消息发送给接收方。</strong>        </p>
+<p>总线上执行逻辑上的线“与”时，显性电平的逻辑值为“0”，隐性电平为“1”。       </p>
+<p><strong>如果总线上只要有一个节点将总线拉到低电平（逻辑0）即显性状态，总线就为低电平（逻辑0）即显性状态而不管总线上有多少节点处于传输隐性状态（高电平或是逻辑1），只有所有节点都为高（隐性），总线才为高，即隐性。</strong></p>
+<h4 id="CAN-协议特点："><a href="#CAN-协议特点：" class="headerlink" title="CAN 协议特点："></a>CAN 协议特点：</h4><p>CAN 总线是一个广播类型的总线，所以任何在总线上的节点都可以监听总线上传输的数据。也就是说总线上的传输不是点到点的，而是一点对多点的传输，这里多点的意思是总线上所有的节点。但是总线上的节点如何知道那些数据是传送给自己的呢？CAN总线的硬件芯片提供了一种叫做本地过滤的功能，通过这种本地过滤的功能可以过滤掉一些和自己无关的数据，而保留一些和自己有关的信息。</p>
+<p><strong>1） 多主控制。</strong> </p>
+<p>在总线空闲时，所有单元都可以发送消息（多主控制），而两个以上的单元同时开始发送消息时，根据标识符（ Identifier 以下称为 ID）决定优先级。 ID 并不是表示发送的目的地址，而是表示访问总线的消息的优先级。两个以上的单元同时开始发送消息时，对各消息 ID 的每个位进行逐个仲裁比较。仲裁获胜（被判定为优先级最高）的单元可继续发送消息，仲裁失利的单元则立刻停止发送而进行接收工作。</p>
+<p><strong>2） 系统的柔软性。</strong> </p>
+<p>与总线相连的单元没有类似于“地址”的信息。因此在总线上增加单元时，连接在总线上的其它单元的软硬件及应用层都不需要改变。</p>
+<p><strong>3） 通信速度较快，通信距离远。</strong> </p>
+<p>最高 1Mbps（距离小于 40M），最远可达 10KM（速率低于 5Kbps）。</p>
+<p><strong>4） 具有错误检测、错误通知和错误恢复功能。</strong></p>
+<p>所有单元都可以检测错误（错误检测功能），检测出错误的单元会立即同时通知其他所有单元（错误通知功能），正在发送消息的单元一旦检测出错误，会强制结束当前的发送。强制结束发送的单元会不断反复地重新发送此消息直到成功发送为止（错误恢复功能）。</p>
+<p><strong>5） 故障封闭功能。</strong></p>
+<p>CAN 可以判断出错误的类型是总线上暂时的数据错误（如外部噪声等）还是持续的数据错误（如单元内部故障、驱动器故障、断线等）。由此功能，当总线上发生持续数据错误时，可将引起此故障的单元从总线上隔离出去。</p>
+<p><strong>6） 连接节点多。</strong>    </p>
+<p>CAN 总线是可同时连接多个单元的总线。可连接的单元总数理论上是没有限制的。但实际上可连接的单元数受总线上的时间延迟及电气负载的限制。降低通信速度，可连接的单元数增加；提高通信速度，则可连接的单元数减少。正是因为 CAN 协议的这些特点，使得 CAN 特别适合工业过程监控设备的互连，因此，越来越受到工业界的重视，并已公认为最有前途的现场总线之一。</p>
+<p>CAN 协议经过 ISO 标准化后有两个标准：ISO11898 标准和 ISO11519-2 标准。其中 ISO11898是针对通信速率为 125Kbps~1Mbps 的高速通信标准，而 ISO11519-2 是针对通信速率为 125Kbps以下的低速通信标准。</p>
+<p><strong>显性电平对应逻辑 0， CAN_H 和 CAN_L 之差为 2.5V 左右。</strong><br><strong>隐性电平对应逻辑 1， CAN_H 和 CAN_L 之差为 0V。</strong></p>
+<p>在总线上显性电平具有优先权，只要有一个单元输出显性电平，总线上即为显性电平。而隐形电平则具有包容的意味，只有所有的单元都输出隐性电平，总线上才为隐性电平（显性电平比隐性电平更强）。另外，在 CAN 总线的起止端都有一个 120Ω的终端电阻，来做阻抗匹配，以减少回波反射。</p>
+<hr>
+<h4 id="物理层"><a href="#物理层" class="headerlink" title="物理层"></a>物理层</h4><p><strong>1、CAN控制器</strong><br>　　CAN控制器集成在电控单元内部，接收由控制单元微处理器传来的数据。CAN控制器对这些数据进行处理并将其传递给CAN收发器;同样CAN控制器也接收收发器传来的数据，处理后传递给控制单元微处理器。</p>
+<p><strong>2、CAH收发器</strong><br>CAN收发器集成在电控单元内部，同时兼具接收、发送和转化数据信号的功能。它将CAN控制器发送来的电平信号数据转化为电压信号并通过数据传输线以广播方式发送出去。同时，它接收数据传输线发送来的电压信号并将电压信号转化为电平信号数据后，发送到CAN控制器。CAN总线上的节点都可以决定自己是否需要总线上的数据</p>
+<p><strong>3、数据传输线</strong><br>为了减少干扰，CN总线的数据传输线采用双绞线，其绞距为20mm，截面积为0.5m，称这两根线为CAN-高线（CAN-H）和CAN-低线（CAN-L），如图2所示。两根线上传输的数据相同，电压值互成镜像，这样，两根线的电压差保持一个常值，所产生的电磁场效应也会由于极性相反而互相抵消。通过该方法，数据传输线可免受外界辐射的干扰;同时，向外辐射时，实际上保持中性（即无辐射）。</p>
+<p><strong>4、数据传输终端</strong><br>数据传输终端是一个电阻器，阻止数据在传输终了被反射回来破坏数据，一般数据传输终端为120Q的电阻。CB311的数据传输终端为两个1202的电阻，分别集成在BCU和组合仪表中。</p>
+<p>与 I 2 C、SPI 等具有时钟信号的通信方式不同，CAN 通信并不是以时钟信号来进行同步的。它只具有 CAN_High 和 CAN_Low 两条信号线，共同构成一组差分信号线，所以CAN 是以差分信号的形式进行通信的。</p>
+<p>遵循 ISO11898 标准的高速短距离闭环网络，它的总线最大长度为 40 m，通信速度最高为 1 Mbit/s。还有一种是遵循 ISO11519-2 标准的低速远距离开环网络，它最大传输距离为 1 km，最高通信速率为 125 kbit/s。</p>
+<p>从 CAN 的通信网络图可以了解到， 它的通信节点由一个 CAN 控制器、一个 CAN 收发器组成。如 STM32 的 CAN 接口即为 CAN 控制器，为了构成完整的节点，还要给它外接一个 CAN 收发器。</p>
+<p>在发送数据时，CAN 控制器把要发送的二进制编码通过 CAN_Tx 线发送到 CAN 收发器，然后由收发器把这个普通的逻辑电平信号转化成差分信号，通过差分线 CAN_High 和CAN_Low 线输出到 CAN 总线网络。在接收数据时，这个过程相反。</p>
+<p>差分信号是什么意思呢？即信号的逻辑 0 和逻辑 1 由两根差分信号线的电压差来表示。ISO11898 规定 CAN 协议中处于逻辑 1 （隐性电平）时，CAN_High 和 CAN_Low 线上的电压均为 2.5 V，即它们的电压差 VH － VL = 0V。而在逻辑 0（显性电平）时，CAN_High 的电平为 3.5 V，CAN_Low 线的电平为 1.5 V，即它们的电压差为 VH － VL =2 V。</p>
+<p>如当 CAN 收发器从 CAN_Tx 线接收到来自 CAN 控制器的低电平信号时，它会将该信号转化，使 CAN_High 输出 3.5 V，同时 CAN_Low 输出 1.5 V，即显性电平。如同串口中的 MAX3232 用作电平转换，CAN 收发器的作用则是用作差分信号的转换。</p>
+<p>在 CAN 总线中，必须处于隐性电平（逻辑 1）或显性电平（逻辑 0）中的一个状态。假如有两个 CAN 通信节点，在同一时间，一个输出隐性电平，另一个输出显性电平，总线的“线与”特性将使它处于显性电平状态，即可以认为显性具有优先的意味。</p>
+<h3 id="CAN-的报文种类及结构"><a href="#CAN-的报文种类及结构" class="headerlink" title="CAN 的报文种类及结构"></a>CAN 的报文种类及结构</h3><p>在 SPI 通信中，片选、时钟信号、数据输入及数据输出这四个信号都有单独的信号线。而 CAN 使用的是两条差分信号线，只能表达一个信号。简洁的物理层决定了 CAN 必然要配上一套更复杂的协议。如何用一个信号通道实现同样甚至更强大的功能呢？答案是对数据或操作命令进行打包</p>
+<h4 id="报文的种类"><a href="#报文的种类" class="headerlink" title="报文的种类"></a>报文的种类</h4><p>在原始数据段的前面加上传输起始标签、片选（识别）标签、控制标签，在数据的尾段加上 CRC 校验标签、应答标签和传输结束标签。把这些内容按特定的格式打包好，就可以用一个通道表达各种信号了，各种各样的标签就如同 SPI 中各种通道上的信号，起到了协同传输的作用。当整个数据包被传输到其他设备时，只要这些设备按格式去解读，就能还原出原始数据。类似这样的数据包就被称为 CAN 的数据帧。为了更有效地控制通信，CAN 一共规定了 5 种类型的帧，帧也称为报文。</p>
+<table>
+<thead>
+<tr>
+<th>帧类型</th>
+<th>帧用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据帧</td>
+<td>用于发送单元向接收单元传送数据的帧</td>
+</tr>
+<tr>
+<td>遥控帧</td>
+<td>用于接收单元向具有相同 ID 的发送单元请求数据的帧</td>
+</tr>
+<tr>
+<td>错误帧</td>
+<td>用于当检测出错误时向其它单元通知错误的帧</td>
+</tr>
+<tr>
+<td>过载帧</td>
+<td>用于接收单元通知其尚未做好接收准备的帧</td>
+</tr>
+<tr>
+<td>间隔帧</td>
+<td>用于将数据帧及遥控帧与前面的帧分离开来的帧</td>
+</tr>
+</tbody>
+</table>
+<h4 id="数据帧的结构"><a href="#数据帧的结构" class="headerlink" title="数据帧的结构"></a>数据帧的结构</h4><p><strong>数据帧是在 CAN 通信中最主要、最复杂的报文，一般由 7 个段构成，数据帧以一个显性位（逻辑 0）开始，以 7 个连续的隐性位（逻辑 1）：</strong></p>
+<pre><code>（ 1） 帧起始。表示数据帧开始的段。
+（ 2） 仲裁段。仲裁段的内容主要为本数据帧的 ID 信息，表示该帧优先级的段。
+（ 3） 控制段。表示数据的字节数及保留位的段。
+（ 4） 数据段。数据的内容，一帧可发送 0~8 个字节的数据。
+（ 5） CRC 段。检查帧的传输错误的段。
+（ 6） ACK 段。表示确认正常接收的段
+（ 7） 帧结束。表示数据帧结束的段。
+</code></pre><p><strong>（1）仲裁段</strong></p>
+<p>仲裁段的内容主要为本数据帧的 ID 信息。</p>
+<p>数据帧分为标准格式和扩展格式两种，区别就在于 ID 信息的长度；标准格式的 ID 为 11 位，扩展格式的 ID 为 29位。</p>
+<p><strong>在CAN协议中，ID起着重要的作用，它决定着数据帧发送的优先级，也决定着其他设备是否会接收这个数据帧。</strong></p>
+<p>CAN 协议不对挂载在它之上的设备分配优先级，对总线的占有权是由信息的重要性决定的，即对于重要的信息，我们会给它打包上一个优先级高的ID，使它能够及时地发送出去。也正因为它这样的优先级分配原则，使得 CAN 的扩展性大大加强，在总线上增加或减少节点并不影响其他设备。报文的优先级，是通过对 ID 的仲裁来确定的。前面对物理层的分析我们知道如果总线上同时出现显性电平和隐性电平，总线的状态会被置为显性电平，优先级的仲裁就根据这个特性实现的。</p>
+<p>若两个节点同时竞争 CAN 总线的占有权，在它们发送报文时， 若首先出现隐性电平，则会失去对总线的占有权，进入接收状态。在开始阶段，两个设备发送的电平一样，所以它们一直继续发送数据。到了图中箭头所指的时序处，节点 1 发送的为隐性时序，而此时节点 2 发送的为显性时序，因此节点 2 竞争总线成功，这个报文得以继续发送出去</p>
+<p>仲裁段 ID 的优先级也影响着接收设备对报文的反应。因为在 CAN 总线上数据是以广播的形式发送的，所有连接在 CAN 总线的节点都会收到所有其他节点发出的有效数据，因而我们的 CAN 控制器大多具有根据 ID 过滤报文的功能，即只接收某些 ID 的报文。</p>
+<p>仲裁段除了报文 ID 外，还有 RTR、IDE、SRR 位。其中 RTR （Remote TransmissionRequest）位是用于区分数据帧和遥控帧的，在数据帧里这一位为显性（逻辑 0）。IDE（Identifi er Extension）位是用于区分标准格式与扩展格式的，在标准格式中为显性，在扩展格式里为隐性。SRR（Substitute Remote Request）位只存在于扩展格式，它用于替代标准格式中的 RTR 位。SRR 位为隐性位，由于 RTR 在数据帧为显性位，所以在两个 ID 相同的标准格式报文与扩展格式报文中，标准格式的优先级较高。</p>
+<p><strong>（2）控制段</strong></p>
+<p>在控制段中的 r1 和 r0 为保留位，默认设置为显性位。最主要的为 DLC 段，DLC 段由<br>4 位组成，MSB 先行，它的二进制编码用于表示本报文中的数据段含有多少个字节，DLC<br>段表示的数字为 0 ～ 8。</p>
+<p><strong>（3）数据段</strong></p>
+<p>数据段为数据帧的核心内容，它由 0 ～ 8 个字节组成，MSB 先行。</p>
+<p><strong>（4）CRC 段</strong></p>
+<p>为了保证报文的正确传输，CAN 的报文包含了一段 15 位的 CRC 校验码，一旦接收端计算出的 CRC 码跟接收到的 CRC 码不同，则会向发送端反馈出错信息以及重新发送。CRC 部分的计算和出错处理一般由 CAN 控制器硬件完成或由软件控制最大重发数。在CRC 校验码之后，有一个 CRC 界定符，它为隐性位，主要作用是把 CRC 校验码与后面的ACK 段隔开。</p>
+<p><strong>（5）ACK 段</strong></p>
+<p>ACK 段包括一个 ACK 槽位和 ACK 界定符位。在 ACK 槽位中，发送端发送的为隐性位，而接收端在这一位中发送显性位以示应答。在 ACK 槽和帧结束之间由 ACK 界定符隔开。</p>
+<p><strong>（6）帧结束段</strong></p>
+<p>帧结束段由发送端发送 7 个隐性位表示结束。CAN 其他种类的帧结构请参阅 CAN 标准协议。</p>
+<h3 id="关键概念"><a href="#关键概念" class="headerlink" title="关键概念"></a>关键概念</h3><h4 id="仲裁"><a href="#仲裁" class="headerlink" title="仲裁"></a>仲裁</h4><p>只要总线空闲，总线上任何节点都可以发送报文，如果有两个或两个以上的节点开始传送报文，那么就会存在总线访问冲突的可能。但是CAN使用了标识符的逐位仲裁方法可以解决这个问题。    </p>
+<p>在仲裁期间，每一个发送器都对发送的电平与被监控的总线电平进行比较。如果电平相同，则这个单元可以继续发送。如果发送的是一”隐性”电平而监视到的是一”显性”电平，那么这个节点失去了仲裁，必须退出发送状态。如果出现不匹配的位不是在仲裁期间则产生错误事件。    </p>
+<p>帧ID越小，优先级越高。由于数据帧的RTR位为显性电平，远程帧为隐性电平，所以帧格式和帧ID相同的情况下，数据帧优先于远程帧；由于标准帧的IDE位为显性电平，扩展帧的IDE位为隐形电平，对于前11位ID相同的标准帧和扩展帧，标准帧优先级比扩展帧高。   </p>
+<h4 id="同步"><a href="#同步" class="headerlink" title="同步"></a>同步</h4><p>由于 CAN 没有时钟信号线，而且它的报文中并没有包含用于同步的标志，所以要使<br>用<strong>位同步</strong>的方式来确保通信时序，以及对总线的电平进行正确采样。</p>
+<p><strong>1. 位时序分解</strong></p>
+<p>为了实现位同步，CAN 协议把每一位的时序分解成SS 段、PTS 段、PBS1 段和 PBS2 段，这四段的长度加起来即为一个 CAN 数据位的长度。分解后最小的时间单位是 Tq，而一个完整的位由 8 ～ 25 个 Tq 组成。图中的一位为 19 Tq。</p>
+<p><strong>2. 同步过程分析</strong></p>
+<p>CAN 的同步分为硬同步和重新同步。因为硬同步时只是在有帧起始信号时起作用，无法确保后续一连串的位时序都是同步的，所以 CAN 还引入了重新同步的方式。在检测到总线上的时序与节点使用的时序有相位差时（即总线上的跳变沿不在节点时序的 SS 段范围），通过延长 PBS1 段或缩短 PBS2 段来获得同步，这样的方式称为重新同步。</p>
+</div><div class="tags"><a href="/tags/汽车电子/">汽车电子</a></div><div class="post-nav"><a class="pre" href="/2018/09/10/QRS/AutomotiveSoftware/CAN/CAN协议简介/">CAN协议简介</a><a class="next" href="/2018/05/13/Android/Android学习笔记6——文件存储/">Android学习笔记6——文件存储</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://yoursite.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android学习笔记/">Android学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CC2540/">CC2540</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/C语言学习/">C语言学习</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/FreeRTOS/">FreeRTOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Numpy学习笔记/">Numpy学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PyQt5快速开发与实战/">PyQt5快速开发与实战</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python学习笔记/">Python学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/S3C2440学习笔记/">S3C2440学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/STM32学习笔记/">STM32学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/单片机/">单片机</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/嵌入式开发学习笔记/">嵌入式开发学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据结构与算法之美学习笔记/">数据结构与算法之美学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/汽车总线/">汽车总线</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/汽车电子学习笔记/">汽车电子学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/汽车电子开发学习笔记/">汽车电子开发学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/硬件学习笔记/">硬件学习笔记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/统一诊断服务UDS/">统一诊断服务UDS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/软件开发/">软件开发</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Python-Numpy/" style="font-size: 15px;">Python Numpy</a> <a href="/tags/硬件基础/" style="font-size: 15px;">硬件基础</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/锂电池/" style="font-size: 15px;">锂电池</a> <a href="/tags/Python3/" style="font-size: 15px;">Python3</a> <a href="/tags/Android/" style="font-size: 15px;">Android</a> <a href="/tags/PyQt5/" style="font-size: 15px;">PyQt5</a> <a href="/tags/嵌入式基础知识-硬件基础知识/" style="font-size: 15px;">嵌入式基础知识 硬件基础知识</a> <a href="/tags/嵌入式基础知识/" style="font-size: 15px;">嵌入式基础知识</a> <a href="/tags/STM32基础/" style="font-size: 15px;">STM32基础</a> <a href="/tags/通信协议/" style="font-size: 15px;">通信协议</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/S3C2440/" style="font-size: 15px;">S3C2440</a> <a href="/tags/STM32项目/" style="font-size: 15px;">STM32项目</a> <a href="/tags/嵌入式基础知识-通信协议/" style="font-size: 15px;">嵌入式基础知识, 通信协议</a> <a href="/tags/嵌入式基础知识-通信协议/" style="font-size: 15px;">嵌入式基础知识 通信协议</a> <a href="/tags/CC2540/" style="font-size: 15px;">CC2540</a> <a href="/tags/有限状态机/" style="font-size: 15px;">有限状态机</a> <a href="/tags/C51/" style="font-size: 15px;">C51</a> <a href="/tags/FreeRTOS/" style="font-size: 15px;">FreeRTOS</a> <a href="/tags/汽车电子/" style="font-size: 15px;">汽车电子</a> <a href="/tags/统一诊断服务UDS/" style="font-size: 15px;">统一诊断服务UDS</a> <a href="/tags/LIN/" style="font-size: 15px;">LIN</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/05/01/QRS/S3C2440/解析S3C2440第一个C程序的内部机制/">解析S3C2440第一个C程序的内部机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/23/SoftWare_skills/Finite_State_Machine/状态机/">有限状态机,</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/23/SoftWare_skills/Finite_State_Machine/用状态机原理进行软件设计——FSM概念/">用状态机原理进行软件设计——FSM概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/14/QRS/AutomotiveSoftware/Diagnostic/统一诊断服务/">汽车控制器(ECU)统一诊断服务基础知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/04/QRS/AutomotiveSoftware/Diagnostic/汽车ECU诊断基本概念/">汽车ECU诊断基本概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/04/QRS/AutomotiveSoftware/LIN/LIN总线诊断的实现/">LIN学习——LIN总线诊断的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/03/QRS/AutomotiveSoftware/Diagnostic/CAN诊断基础知识/">CAN诊断基础知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/20/QRS/AutomotiveSoftware/LIN/LIN学习——LIN应用层/">QRS/AutomotiveSoftware/LIN/LIN学习——LIN应用层</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/20/QRS/AutomotiveSoftware/LIN/LIN学习——工作流/">LIN学习——工作流</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/19/QRS/AutomotiveSoftware/LIN/LIN学习——LIN描述文件/">QRS/AutomotiveSoftware/LIN/LIN学习——LIN描述文件</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2019 <a href="/." rel="nofollow">yphfree的学习笔记.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
